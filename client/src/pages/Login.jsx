@@ -32,15 +32,18 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
+  const [isLogin, setIsLogin] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
 
-  const toggleLogin = () => {};
+  const toggleLogin = () => {
+    setIsLogin(!isLogin);
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setImageFile(file);
-    setImageUrl(URL.createObjectURL(file)); // Set URL for preview (optional)
+    setImageUrl(URL.createObjectURL(file));
   };
 
   return (
@@ -71,7 +74,30 @@ const Login = () => {
               name: "",
               bio: "",
             }}
-            validationSchema={validationSchema}
+            validationSchema={
+              isLogin
+                ? Yup.object({
+                    username: Yup.string()
+                      .required("Username is required")
+                      .min(3, "Username must be at least 3 characters long")
+                      .max(
+                        20,
+                        "Username cannot be more than 20 characters long"
+                      )
+                      .matches(
+                        /^[a-zA-Z0-9]+$/,
+                        "Username can only contain letters and numbers"
+                      ),
+                    password: Yup.string()
+                      .required("Password is required")
+                      .min(8, "Password must be at least 8 characters long")
+                      .matches(
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
+                        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+                      ),
+                  })
+                : validationSchema
+            }
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
                 alert(JSON.stringify(values, null, 2));
@@ -81,67 +107,73 @@ const Login = () => {
           >
             {({ isSubmitting }) => (
               <Form style={{ width: "100%", marginTop: "0.5rem" }}>
-                <Stack position={"relative"} width={"10rem"} margin={"auto"}>
-                  <Avatar
-                    sx={{
-                      width: "10rem",
-                      height: "10rem",
-                      objectFit: "contain",
-                    }}
-                    src={imageUrl || "/default-avatar.png"} // Use default image if no image selected
-                  />
-                  <IconButton
-                    sx={{
-                      position: "absolute",
-                      bottom: "0",
-                      right: "0",
-                      color: "white",
-                      bgcolor: "rgba(0, 0, 0,0.5)",
-                      ":hover": {
-                        bgcolor: "rgba(0, 0, 0,0.7)",
-                      },
-                    }}
-                    component="label"
-                  >
-                    <>
-                      <CameraAltIcon />
-                      <VisuallyHiddenInput
-                        type="file"
-                        onChange={(event) => handleFileChange(event)}
-                      />
-                    </>
-                  </IconButton>
-                </Stack>
+                {!isLogin && (
+                  <Stack position={"relative"} width={"10rem"} margin={"auto"}>
+                    <Avatar
+                      sx={{
+                        width: "10rem",
+                        height: "10rem",
+                        objectFit: "contain",
+                      }}
+                      src={imageUrl || "/default-avatar.png"}
+                    />
+                    <IconButton
+                      sx={{
+                        position: "absolute",
+                        bottom: "0",
+                        right: "0",
+                        color: "white",
+                        bgcolor: "rgba(0, 0, 0,0.5)",
+                        ":hover": {
+                          bgcolor: "rgba(0, 0, 0,0.7)",
+                        },
+                      }}
+                      component="label"
+                    >
+                      <>
+                        <CameraAltIcon />
+                        <VisuallyHiddenInput
+                          type="file"
+                          onChange={(event) => handleFileChange(event)}
+                        />
+                      </>
+                    </IconButton>
+                  </Stack>
+                )}
 
-                <Field
-                  type="text"
-                  name="name"
-                  label="Name"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                  as={TextField}
-                />
-                <ErrorMessage
-                  name="name"
-                  component="div"
-                  className="error-message"
-                />
+                {!isLogin && (
+                  <>
+                    <Field
+                      type="text"
+                      name="name"
+                      label="Name"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      as={TextField}
+                    />
+                    <ErrorMessage
+                      name="name"
+                      component="div"
+                      className="error-message"
+                    />
 
-                <Field
-                  type="text"
-                  name="bio"
-                  label="Bio"
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                  as={TextField}
-                />
-                <ErrorMessage
-                  name="bio"
-                  component="div"
-                  className="error-message"
-                />
+                    <Field
+                      type="text"
+                      name="bio"
+                      label="Bio"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      as={TextField}
+                    />
+                    <ErrorMessage
+                      name="bio"
+                      component="div"
+                      className="error-message"
+                    />
+                  </>
+                )}
 
                 <Field
                   type="text"
@@ -181,7 +213,7 @@ const Login = () => {
                   fullWidth
                   disabled={isSubmitting}
                 >
-                  Sign Up
+                  {isLogin ? "Log In" : "Sign Up"}
                 </Button>
 
                 <Typography textAlign={"center"} m={"1rem"}>
@@ -195,7 +227,7 @@ const Login = () => {
                   type="button"
                   onClick={toggleLogin}
                 >
-                  LogIn
+                  {isLogin ? "Sign Up" : "Log In"}
                 </Button>
               </Form>
             )}
