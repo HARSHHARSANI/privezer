@@ -46,8 +46,17 @@ const Login = () => {
     setImageUrl(URL.createObjectURL(file));
   };
 
+  const handleLogin = (values) => {
+    e.preventDefault();
+    console.log("Login values:", values);
+  };
+
   return (
-    <>
+    <div
+      style={{
+        background: "linear-gradient(to right, #f0f0f0, #808080)",
+      }}
+    >
       <Container
         component={"main"}
         maxWidth="xs"
@@ -99,10 +108,9 @@ const Login = () => {
                 : validationSchema
             }
             onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                setSubmitting(false);
-              }, 400);
+              values.imageUrl = imageUrl;
+              handleLogin(values);
+              setSubmitting(false);
             }}
           >
             {({ isSubmitting }) => (
@@ -234,7 +242,7 @@ const Login = () => {
           </Formik>
         </Paper>
       </Container>
-    </>
+    </div>
   );
 };
 
