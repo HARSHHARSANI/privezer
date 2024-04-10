@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { Link } from "../styles/StyledComponent";
 import { Stack, Typography, Box } from "@mui/material";
+import Avatar from "./AvatarCard";
 
 const ChatItem = ({
   avatar = [],
@@ -13,6 +14,7 @@ const ChatItem = ({
   index,
   handleDeleteChat,
 }) => {
+  console.log(avatar);
   return (
     <Link
       sx={{
@@ -32,7 +34,8 @@ const ChatItem = ({
           position: "relative",
         }}
       >
-        {/* Avatar Card */}
+        <Avatar avatar={avatar} />
+
         <Stack>
           <Typography>{name}</Typography>
           {newMessageAlert && (
