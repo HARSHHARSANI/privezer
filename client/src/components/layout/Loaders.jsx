@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Skeleton } from "@mui/material";
+import { Grid, Skeleton, Stack } from "@mui/material";
 
 export const LayoutLoaders = () => {
   return (
@@ -13,15 +13,21 @@ export const LayoutLoaders = () => {
         }}
         height={"100%"}
       >
-        <Skeleton variant="rectangular" />
+        <Skeleton variant="rectangular" height={"100vh"} />
       </Grid>
       <Grid item xs={12} sm={8} md={5} lg={6} height={"100%"}>
-        <Skeleton variant="rectangular" />
+        <Stack spacing={"1rem"}>
+          {Array(10)
+            .fill(0)
+            .map((_, index) => (
+              <Skeleton key={index} variant="rectangular" height={"5rem"} />
+            ))}
+        </Stack>
       </Grid>
       <Grid
         item
         md={4}
-        lg={3}k
+        lg={3}
         sx={{
           display: { xs: "none", md: "block" },
         }}
