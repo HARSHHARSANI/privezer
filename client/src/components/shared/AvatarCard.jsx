@@ -1,5 +1,6 @@
 import React from "react";
 import { Stack, Box, Avatar } from "@mui/material";
+import { transformImage } from "../../lib/features";
 
 const AvatarCard = ({ avatar = [], max = 4 }) => {
   return (
@@ -9,7 +10,7 @@ const AvatarCard = ({ avatar = [], max = 4 }) => {
           {Array.isArray(avatar) &&
             avatar?.map((i, index) => (
               <img
-                src={i}
+                src={transformImage(i)}
                 key={index}
                 alt={`Avatar ${index}`}
                 style={{

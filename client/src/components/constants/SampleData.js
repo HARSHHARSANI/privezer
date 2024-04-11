@@ -91,3 +91,54 @@ export const SampleNotifications = [
     },
   },
 ];
+
+export const sampleMessage = [
+  {
+    attachments: [
+      {
+        public_id: "sample",
+        url: "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      },
+    ],
+    content: "Hello",
+    _id: "adasdasdasd",
+    sender: {
+      _id: "1",
+      name: "John",
+    },
+    chat: "chatId",
+    createdAt: "2021-10-01T00:00:00.000Z",
+  },
+  {
+    attachments: [
+      {
+        public_id: "sample",
+        url: "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      },
+    ],
+    content: "Hello",
+    _id: "adasdasd",
+    sender: {
+      _id: "2",
+      name: "Jane",
+    },
+    chat: "chatId",
+    createdAt: "2021-10-01T00:00:00.000Z",
+  },
+  {
+    attachments: [
+      {
+        public_id: "sample",
+        url: "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      },
+    ],
+    content: "Hello",
+    _id: "asdsadsdasdsadasd",
+    sender: {
+      _id: "3",
+      name: "Doe",
+    },
+    chat: "chatId",
+    createdAt: "2021-10-01T00:00:00.000Z",
+  },
+];
