@@ -40,3 +40,54 @@ export const Samplechats = [
     },
   },
 ];
+
+export const SampleUsers = [
+  {
+    avatar:
+      "https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?size=626&ext=jpg&ga=GA1.1.1219724508.1709959508&semt=sph",
+    name: "Doe",
+    _id: 3,
+  },
+  {
+    avatar:
+      "https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?size=626&ext=jpg&ga=GA1.1.1219724508.1709959508&semt=sph",
+    name: "Jane",
+    _id: 2,
+  },
+  {
+    avatar:
+      "https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?size=626&ext=jpg&ga=GA1.1.1219724508.1709959508&semt=sph",
+    name: "John",
+    _id: 1,
+  },
+];
+
+export const SampleNotifications = [
+  {
+    _id: "1",
+    message: "John has sent you a friend request",
+    sender: {
+      avatar:
+        "https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?size=626&ext=jpg&ga=GA1.1.1219724508.1709959508&semt=sph",
+      name: "John",
+    },
+  },
+  {
+    _id: "2",
+    message: "Jane has sent you a friend request",
+    sender: {
+      avatar:
+        "https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?size=626&ext=jpg&ga=GA1.1.1219724508.1709959508&semt=sph",
+      name: "Jane",
+    },
+  },
+  {
+    _id: "3",
+    message: "Doe has sent you a friend request",
+    sender: {
+      avatar:
+        "https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?size=626&ext=jpg&ga=GA1.1.1219724508.1709959508&semt=sph",
+      name: "Doe",
+    },
+  },
+];

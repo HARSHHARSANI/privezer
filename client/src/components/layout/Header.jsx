@@ -44,7 +44,7 @@ const Header = () => {
   };
 
   const openNotification = () => {
-    setisNotification(!isNotification);
+    setIsNotification(!isNotification);
   };
 
   const navigateToGroup = () => navigate("/groups");
