@@ -12,9 +12,7 @@ const ChatItem = ({
   isOnline,
   newMessageAlert = [],
   index,
-  handleDeleteChat,
 }) => {
-  console.log(avatar);
   return (
     <Link
       sx={{

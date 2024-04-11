@@ -71,7 +71,7 @@ const Header = () => {
                 bgcolor: "red",
               }}
             >
-              Chattu
+              Pr!vezer
             </Typography>
             <Box sx={{ display: { xs: "block", sm: "none" } }}>
               <IconButton color="inherit" onClick={handleMobile}>

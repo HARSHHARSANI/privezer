@@ -15,7 +15,7 @@ const ChatList = ({
       {chats.map((data, index) => {
         const { avatar, name, _id, GroupChat, members } = data;
         const newMessageAlert = newMessagesAlert?.find(
-          ({ chatId }) => chatId === _id
+          ({ chatId }) => chatId == _id
         );
 
         const isOnline = members?.some((member) =>
@@ -32,7 +32,7 @@ const ChatList = ({
             _id={_id}
             GroupChat={GroupChat}
             key={_id}
-            sameSender={chatId === _id}
+            sameSender={chatId == _id}
             handleDeleteChat={handleDeleteChat}
           />
         );

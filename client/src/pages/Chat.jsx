@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import AppLayout from "../components/layout/AppLayout";
-
+import { Stack } from "@mui/material";
 const Chat = () => {
-  return <div>Chat</div>;
+  const containerRef = useRef(null);
+  return <Stack ref={containerRef}></Stack>;
 };
 
 export default AppLayout()(Chat);
