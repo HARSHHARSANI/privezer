@@ -8,3 +8,5 @@ export const infoColor = "rgba(0,0,255,0.5)";
 export const primaryColor = "rgba(0,0,255,0.5)";
 export const secondaryColor = "rgba(255,0,0,0.5)";
 export const lightBlue = "#2694ab";
+export const backGround = "linear-gradient(to right, #f0f0f0, #808080)";
+export const lightOrange = "#f0a500";

@@ -39,6 +39,19 @@ export const Samplechats = [
       count: 0,
     },
   },
+  {
+    _id: 4,
+    name: "Group 1",
+    avatar: [
+      "https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?size=626&ext=jpg&ga=GA1.1.1219724508.1709959508&semt=sph",
+    ],
+    GroupChat: true,
+    sameSender: false,
+    isOnline: true,
+    newMessageAlert: {
+      count: 0,
+    },
+  },
 ];
 
 export const SampleUsers = [

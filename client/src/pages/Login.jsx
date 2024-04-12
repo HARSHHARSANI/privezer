@@ -13,6 +13,7 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponent";
+import { backGround } from "../components/constants/color";
 
 const validationSchema = Yup.object({
   username: Yup.string()
@@ -54,7 +55,7 @@ const Login = () => {
   return (
     <div
       style={{
-        background: "linear-gradient(to right, #f0f0f0, #808080)",
+        background: backGround,
       }}
     >
       <Container
