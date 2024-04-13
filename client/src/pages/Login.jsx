@@ -75,6 +75,7 @@ const Login = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            width: "100%",
           }}
         >
           <Formik
