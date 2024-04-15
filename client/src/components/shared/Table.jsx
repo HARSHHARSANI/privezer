@@ -1,13 +1,6 @@
-import React from "react";
-import { DataGrid } from "@mui/x-data-grid";
 import { Container, Paper, Typography } from "@mui/material";
-import {
-  backGround,
-  grayColor,
-  lightGray,
-  matBlack,
-  secondaryColor,
-} from "../constants/color";
+import { DataGrid } from "@mui/x-data-grid";
+import React from "react";
 
 const Table = ({ rows, columns, heading, rowHeight = 52 }) => {
   return (

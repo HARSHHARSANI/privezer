@@ -155,3 +155,197 @@ export const sampleMessage = [
     createdAt: "2021-10-01T00:00:00.000Z",
   },
 ];
+
+export const DashboardData = {
+  users: [
+    {
+      name: "John",
+      avatar:
+        "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      _id: "1",
+      username: "john",
+      friends: 20,
+      groups: 10,
+    },
+    {
+      name: "Jane",
+      avatar:
+        "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      _id: "2",
+      username: "jane",
+      friends: 20,
+      groups: 10,
+    },
+    {
+      name: "Doe",
+      avatar:
+        "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      _id: "3",
+      username: "doe",
+      friends: 20,
+      groups: 10,
+    },
+  ],
+
+  chats: [
+    {
+      name: "labadDass group",
+      avatar: [
+        "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      ],
+      _id: "1",
+      totalMembers: 20,
+      members: [
+        {
+          _id: "1",
+          avatar:
+            "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+        {
+          _id: "2",
+          avatar:
+            "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+        {
+          _id: "3",
+          avatar:
+            "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+      ],
+      totalMessages: 20,
+      groupChat: false,
+      creator: {
+        name: "John",
+        avatar:
+          "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      },
+    },
+    {
+      name: "Lussan group",
+      avatar: [
+        "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      ],
+      _id: "2",
+      totalMembers: 20,
+      members: [
+        {
+          _id: "1",
+          avatar:
+            "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+        {
+          _id: "2",
+          avatar:
+            "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+        {
+          _id: "3",
+          avatar:
+            "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+      ],
+      totalMessages: 20,
+      groupChat: false,
+      creator: {
+        name: "Jane",
+        avatar:
+          "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      },
+    },
+    {
+      name: "m nhi btaunga group",
+      avatar: [
+        "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      ],
+      _id: "3",
+      totalMembers: 210,
+      members: [
+        {
+          _id: "1",
+          avatar:
+            "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+        {
+          _id: "2",
+          avatar:
+            "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+        {
+          _id: "3",
+          avatar:
+            "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+      ],
+      totalMessages: 3420,
+      groupChat: false,
+      creator: {
+        name: "Doe",
+        avatar:
+          "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+      },
+    },
+  ],
+
+  messages: [
+    {
+      attachments: [
+        {
+          public_id: "sample",
+          url: "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+      ],
+      content: "Hello",
+      _id: "adasdasdasd",
+      sender: {
+        _id: "1",
+        name: "John",
+        avatar: [
+          "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        ],
+      },
+      chat: "chatId",
+      groupChat: false,
+      createdAt: "2021-10-01T00:00:00.000Z",
+    },
+    {
+      attachments: [
+        {
+          public_id: "sample",
+          url: "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+      ],
+      content: "Hello",
+      _id: "adasdasd",
+      sender: {
+        _id: "2",
+        name: "Jane",
+        avatar: [
+          "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        ],
+      },
+      chat: "chatId",
+      groupChat: true,
+      createdAt: "2021-10-01T00:00:00.000Z",
+    },
+    {
+      attachments: [
+        {
+          public_id: "sample",
+          url: "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        },
+      ],
+      content: "La*de ka hello",
+      _id: "asdsadsdasdsadasd",
+      sender: {
+        _id: "3",
+        name: "Doe",
+        avatar: [
+          "https://res.cloudinary.com/djvjxp2am/image/upload/v1632965829/sample.jpg",
+        ],
+      },
+      groupChat: true,
+      chat: "chatId",
+      createdAt: "2021-10-01T00:00:00.000Z",
+    },
+  ],
+};

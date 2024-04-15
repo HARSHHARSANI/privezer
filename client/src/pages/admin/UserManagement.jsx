@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import Table from "../../components/shared/Table";
 import { Avatar } from "@mui/material";
+import { DashboardData } from "../../components/constants/SampleData";
+import { transformImage } from "../../lib/features";
 
 const UserManagement = () => {
   const columns = [
@@ -46,6 +48,16 @@ const UserManagement = () => {
     },
   ];
   const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    setRows(
+      DashboardData.users.map((user) => ({
+        ...user,
+        id: user._id,
+        avatar: transformImage(user.avatar, 50),
+      }))
+    );
+  }, []);
 
   return (
     <AdminLayout>

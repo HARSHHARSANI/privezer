@@ -39,7 +39,7 @@ function App() {
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/user-management" element={<Usermanagement />} />
-          <Route path="/admin/chat-management" element={<Chatmanagement />} />
+          <Route path="/admin/group-management" element={<Chatmanagement />} />
           <Route
             path="/admin/message-management"
             element={<Messagemanagement />}
