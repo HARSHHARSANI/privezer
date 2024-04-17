@@ -1,1 +1,59 @@
-transformImage
+Usermodel
+    name
+    username
+    bio
+    password(hashed)
+    avatar : public Id / Url
+    Friends
+
+
+ChatModel
+    name
+    groupChat :boolean
+    creator
+    members : Array of UserIds
+
+
+
+MessagesModel
+    content
+    attachment
+    sender :userId
+    receiver
+    Chat : chatId
+
+
+
+RequestModel:
+    status : enum
+    sender
+    receiver
+
+
+API's
+    Login/Register
+    Search
+    sendRequst
+    Notification API
+    Accept Request
+    Get My Friends API
+    Send Attachment API
+    Group Create API
+    Get My Chat API
+    Get My Groups API
+    Get Chat Details
+    RenameGroup
+    Delete Group
+    Add members API
+    remove members API
+    Leave Group API
+    Get Messages API
+    
+
+    
+Admin :
+    login/logout
+    ADmin Dashboard Statistic
+    Chat DAta
+    Messages
+    

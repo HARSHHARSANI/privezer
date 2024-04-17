@@ -1,5 +1,6 @@
 import moment from "moment";
 
+console.log("asd");
 export const fileFormat = (url = "") => {
   const fileExtension = url.split(".").pop();
 
