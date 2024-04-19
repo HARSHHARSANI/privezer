@@ -98,3 +98,19 @@ export const logoutController = TryCatch(async (req, res, next) => {
     message: "Logged out successfully",
   });
 });
+
+export const searchUserController = TryCatch(async (req, res, next) => {
+  const { name } = req.query;
+  const users = await userModel.find({
+    name: { $regex: name, $options: "i" },
+  });
+
+  if (!users) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
