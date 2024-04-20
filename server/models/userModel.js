@@ -5,11 +5,13 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      trim: true,
     },
     username: {
       type: String,
       required: true,
-      unique: true,
+      unique: true, // Ensure usernames are unique
+      trim: true,
     },
     bio: {
       type: String,
@@ -35,5 +37,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.index({ username: 1 }, { unique: true }); // Indexing username field with unique constraint
 
 export default mongoose.model("User", userSchema);

@@ -19,3 +19,5 @@ export const multerUploads = multer({
 });
 
 export const singleAvatar = multerUploads.single("avatar");
+
+export const attachmentsMulter = multerUploads.array("files", 5);

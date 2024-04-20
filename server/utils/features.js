@@ -35,3 +35,13 @@ export const sendToken = (user, message, statusCode, res) => {
 export const emitEvents = (req, event, users, data) => {
   console.log("emitting event", event);
 };
+
+export const deleteFilesFromCloudinary = async (public_ids) => {
+  try {
+    // const result = await cloudinary.api.delete_resources(public_ids);
+    // console.log(result);
+    console.log("inside deleteFilesFromCloudinary");
+  } catch (error) {
+    console.error(error);
+  }
+};

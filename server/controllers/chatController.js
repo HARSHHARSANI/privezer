@@ -1,9 +1,15 @@
-import { ALERT, REFRESH_CHATS } from "../constants/events.js";
+import {
+  ALERT,
+  NEW_ATTACHMENT,
+  NEW_MESSAGE,
+  REFRESH_CHATS,
+} from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 import { TryCatch } from "../middlewares/error.js";
 import chatModel from "../models/chatModel.js";
 import userModel from "../models/userModel.js";
-import { emitEvents } from "../utils/features.js";
+import messageModel from "../models/messageModel.js";
+import { deleteFilesFromCloudinary, emitEvents } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 
 export const newGroupChatController = TryCatch(async (req, res, next) => {
@@ -228,7 +234,7 @@ export const leaveGroupController = TryCatch(async (req, res, next) => {
     (member) => member._id.toString() !== req.user.toString()
   );
 
-  if (remainingMembers.length < 4) {
+  if (remainingMembers.length < 3) {
     return next(new ErrorHandler("Group must have at least 3 members", 400));
   }
 
@@ -254,5 +260,208 @@ export const leaveGroupController = TryCatch(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     message: "You have left the group",
+  });
+});
+
+export const sendAttachmentController = TryCatch(async (req, res, next) => {
+  const { chatId } = req.body;
+
+  // Corrected: Use await with each promise
+  const [chat, user] = await Promise.all([
+    chatModel.findById(chatId),
+    userModel.findById(req.user, "name"),
+  ]);
+
+  if (!chat) {
+    return next(new ErrorHandler("Chat not found", 404));
+  }
+
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  const files = req.files || [];
+
+  if (files.length < 1) {
+    return next(new ErrorHandler("No file attached", 400));
+  }
+
+  //upload files here
+  const attachments = [];
+
+  const messageForDB = {
+    content: "",
+    attachments,
+    sender: req.user,
+    chat: chatId,
+  };
+
+  const messageForRealTime = {
+    ...messageForDB,
+    sender: {
+      _id: req.user,
+      name: user.name,
+    },
+  };
+
+  const message = await messageModel.create(messageForDB);
+
+  emitEvents(req, NEW_ATTACHMENT, chat.members, {
+    message: messageForRealTime,
+    chatId,
+  });
+
+  emitEvents(req, NEW_MESSAGE, chat.members, { chatId });
+
+  return res.status(201).json({
+    success: true,
+    message,
+  });
+});
+
+export const getChatDetailsController = TryCatch(async (req, res, next) => {
+  if (req.query.populate === "true") {
+    const { id } = req.params;
+
+    // console.log("run 1");
+
+    const chat = await chatModel
+      .findById(id)
+      .populate("members", "name username avatar")
+      .lean();
+
+    if (!chat) {
+      return next(new ErrorHandler("Chat not found", 404));
+    }
+
+    chat.members = chat.members.map((member) => {
+      return {
+        _id: member._id,
+        name: member.name,
+        avatar: member.avatar.url,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      chat,
+    });
+  } else {
+    const chat = await chatModel.findById(req.params.id);
+    // console.log("run2 ");
+    if (!chat) {
+      return next(new ErrorHandler("Chat not found", 404));
+    }
+
+    return res.status(200).json({
+      success: true,
+      chat,
+    });
+  }
+});
+
+export const deleteChatDetailsController = TryCatch(async (req, res, next) => {
+  const chat = await chatModel.findById(req.params.id);
+
+  if (!chat) {
+    return next(new ErrorHandler("Chat not found", 404));
+  }
+
+  if (chat.groupChat && chat.creator.toString() !== req.user.toString()) {
+    return next(new ErrorHandler("You are not the creator of this group", 400));
+  }
+
+  if (!chat.groupChat && !chat.members.includes(req.user.toString())) {
+    return next(new ErrorHandler("You are not a member of this chat", 400));
+  }
+
+  //here we have to delete all the messages of this chat as well as attachments of those messages on cloudinary
+
+  const messagesWithAttachments = await messageModel.find({
+    chat: chat._id,
+    attachments: { $exists: true, $ne: [] },
+  });
+
+  const public_ids = [];
+
+  messagesWithAttachments.forEach(({ attachments }) => {
+    attachments.forEach(({ public_id }) => {
+      public_ids.push(public_id);
+    });
+  });
+
+  await Promise.all([
+    //delete Files from Cloudinary
+    deleteFilesFromCloudinary(public_ids),
+    chat.deleteOne(),
+    messageModel.deleteMany({ chat: chat._id }),
+  ]);
+
+  emitEvents(req, REFRESH_CHATS, chat.members);
+
+  return res.status(200).json({
+    success: true,
+    message: "Chat deleted successfully",
+  });
+});
+
+export const renameGroupController = TryCatch(async (req, res, next) => {
+  const { id } = req.params;
+
+  const chat = await chatModel.findById(id);
+
+  if (!chat) {
+    return next(new ErrorHandler("Chat not found", 404));
+  }
+
+  if (!chat.groupChat) {
+    return next(new ErrorHandler("This is not a group chat", 400));
+  }
+
+  if (!chat.creator || !req.user) {
+    return next(new ErrorHandler("Invalid creator or user", 500));
+  }
+
+  if (chat.creator.toString() !== req.user.toString()) {
+    return next(new ErrorHandler("You are not the creator of this group", 400));
+  }
+
+  const { name } = req.body;
+
+  chat.name = name;
+
+  await chat.save();
+
+  emitEvents(req, REFRESH_CHATS, chat.members, `Group name changed to ${name}`);
+
+  return res.status(200).json({
+    success: true,
+    message: "Chat name updated successfully",
+  });
+});
+
+export const getMessagesController = TryCatch(async (req, res, next) => {
+  const { id } = req.params;
+  const { page = 1 } = req.query;
+
+  const resultPerPage = 20;
+  const skip = (page - 1) * resultPerPage;
+
+  const [message, totalMessageCount] = await Promise.all([
+    messageModel
+      .find({ chat: id })
+      .populate("sender", "name username avatar")
+      .sort("-createdAt")
+      .limit(resultPerPage)
+      .skip(skip),
+    messageModel.countDocuments({ chat: id }),
+  ]);
+
+  const totalPages = Math.ceil(totalMessageCount / resultPerPage);
+
+  return res.status(200).json({
+    success: true,
+    message: message.reverse(),
+    totalPages,
   });
 });
