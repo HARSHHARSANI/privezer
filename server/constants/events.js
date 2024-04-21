@@ -12,3 +12,4 @@ export const DELETE_MESSAGE = "DELETE_MESSAGE";
 export const EDIT_MESSAGE = "EDIT_MESSAGE";
 export const NEW_CHAT = "NEW_CHAT";
 export const NEW_USER = "NEW_USER";
+export const New_REQUEST = "NEW_REQUEST";

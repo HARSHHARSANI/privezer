@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+const { ObjectId } = mongoose.Schema;
 
 const userSchema = new mongoose.Schema(
   {
@@ -34,10 +35,17 @@ const userSchema = new mongoose.Schema(
         required: true,
       },
     },
+
+    friends: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-userSchema.index({ username: 1 }, { unique: true }); // Indexing username field with unique constraint
+userSchema.index({ username: 1 }, { unique: true });
 
 export default mongoose.model("User", userSchema);

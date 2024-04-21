@@ -70,3 +70,21 @@ export const renameGroupValidators = () => [
   param("id", "Please Enter ChatId").notEmpty(),
   body("name", "Please Enter Name").notEmpty(),
 ];
+
+export const searchUserValidators = () => [
+  query("name", "Please Enter Username").notEmpty(),
+];
+
+export const sendRequestValidators = () => [
+  body("id", "Please Enter ReceiverId").notEmpty(),
+];
+
+export const acceptRequestValidators = () => [
+  body("requestId", "Please Enter SenderId")
+    .notEmpty()
+    .withMessage("Sender Id is required"),
+  body("accept", "Please Enter Accept")
+    .notEmpty()
+    .isBoolean()
+    .withMessage("Accept must be a boolean"),
+];
