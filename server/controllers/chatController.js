@@ -444,6 +444,8 @@ export const getMessagesController = TryCatch(async (req, res, next) => {
   const { id } = req.params;
   const { page = 1 } = req.query;
 
+  // console.log("page", page);
+
   const resultPerPage = 20;
   const skip = (page - 1) * resultPerPage;
 
@@ -456,7 +458,8 @@ export const getMessagesController = TryCatch(async (req, res, next) => {
       .skip(skip),
     messageModel.countDocuments({ chat: id }),
   ]);
-
+  // console.log(message.length);
+  // console.log(totalMessageCount);
   const totalPages = Math.ceil(totalMessageCount / resultPerPage);
 
   return res.status(200).json({

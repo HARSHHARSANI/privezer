@@ -14,9 +14,9 @@ export const isAuthenticated = TryCatch((req, res, next) => {
   const decodedData = jwt.verify(token, process.env.JWT_SECRET);
 
   req.user = decodedData.id;
-  console.log("req.user", req.user);
+  // console.log("req.user", req.user);
 
-  console.log(decodedData);
+  // console.log(decodedData);
   next();
 });
 // Compare this snippet from server/utils/error.js:

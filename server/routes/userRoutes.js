@@ -6,13 +6,27 @@ import {
   registerController,
   searchUserController,
 } from "../controllers/userController.js";
-import { singleAvatar } from "../middlewares/multer.js";
+import {
+  loginValidators,
+  registerValidators,
+  validateHandler
+} from "../lib/validators.js";
 import { isAuthenticated } from "../middlewares/auth.js";
+import { singleAvatar } from "../middlewares/multer.js";
+
+// Function to dynamically run registerValidators middleware
 
 const router = express.Router();
 ///before login
-router.post("/login", loginController);
-router.post("/register", singleAvatar, registerController);
+router.post("/login", loginValidators(), validateHandler, loginController);
+
+router.post(
+  "/register",
+  singleAvatar,
+  registerValidators(),
+  validateHandler,
+  registerController
+);
 
 ///user must be logged in
 router.get("/profile", isAuthenticated, getMyProfile);

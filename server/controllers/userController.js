@@ -15,7 +15,9 @@ export const registerController = async (req, res) => {
     };
 
     if (!name || !username || !bio || !password || !avatar) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res
+        .status(400)
+        .json({ message: "All fields are required from registerController" });
     }
 
     if (password.length < 6) {
