@@ -13,7 +13,6 @@ export const registerValidators = () => [
   body(["username", "password", "name", "bio"])
     .notEmpty()
     .withMessage("All fields and profile pic is required "),
-  body("avatar", "Please upload a profile pic").notEmpty(),
 ];
 
 export const loginValidators = () => [
@@ -87,4 +86,8 @@ export const acceptRequestValidators = () => [
     .notEmpty()
     .isBoolean()
     .withMessage("Accept must be a boolean"),
+];
+
+export const adminLoginValidators = () => [
+  body("secretKey", "please Enter Secret Key").notEmpty(),
 ];

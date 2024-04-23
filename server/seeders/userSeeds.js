@@ -109,6 +109,7 @@ export const createMessage = async (numMessages) => {
         messageModel.create({
           chat: chats[randomChatIndex],
           sender: users[randomUserIndex],
+          content: faker.lorem.sentence(),
           message: faker.lorem.sentence(),
         })
       );
@@ -136,6 +137,7 @@ export const createMessageInAChat = async (numMessages, chatId) => {
           chat: chatId,
           sender: users[randomUserIndex],
           message: faker.lorem.sentence(),
+          content: faker.lorem.sentence(),
         })
       );
     }

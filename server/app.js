@@ -12,6 +12,8 @@ import {
   createMessageInAChat,
   createSingleChats,
 } from "./seeders/userSeeds.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import colors from "colors";
 
 dotenv.config();
 
@@ -23,15 +25,19 @@ connectDB();
 //createSingleChats(10);
 //createGroupChats(10);
 //  createMessage(10);
-//createMessageInAChat(10, "6623490aa3ad1fa4ca1d3200");
+// createMessageInAChat(10, "6623490aa3ad1fa4ca1d3200");
 
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/users", userRoutes);
 app.use("/chats", chatRoute);
+app.use("/admin", adminRoutes);
 
 app.use(errorMiddleware);
 app.listen(process.env.PORT, () => {
-  console.log("Server is running on port 3000");
+  console.log(
+    `Server is running on port ${process.env.PORT} in ${process.env.NODE_ENV}`
+      .bgCyan.black
+  );
 });

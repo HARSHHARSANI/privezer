@@ -7,8 +7,8 @@ import {
 import { getOtherMember } from "../lib/helper.js";
 import { TryCatch } from "../middlewares/error.js";
 import chatModel from "../models/chatModel.js";
-import userModel from "../models/userModel.js";
 import messageModel from "../models/messageModel.js";
+import userModel from "../models/userModel.js";
 import { deleteFilesFromCloudinary, emitEvents } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 
@@ -266,6 +266,18 @@ export const leaveGroupController = TryCatch(async (req, res, next) => {
 export const sendAttachmentController = TryCatch(async (req, res, next) => {
   const { chatId } = req.body;
 
+  const files = req.files || [];
+
+  if (files.length < 1) {
+    return next(new ErrorHandler("No file attached", 400));
+  }
+
+  if (files.length > 5) {
+    return next(
+      new ErrorHandler("You can't send more than 5 files at a time", 400)
+    );
+  }
+
   // Corrected: Use await with each promise
   const [chat, user] = await Promise.all([
     chatModel.findById(chatId),
@@ -278,12 +290,6 @@ export const sendAttachmentController = TryCatch(async (req, res, next) => {
 
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
-  }
-
-  const files = req.files || [];
-
-  if (files.length < 1) {
-    return next(new ErrorHandler("No file attached", 400));
   }
 
   //upload files here

@@ -7,17 +7,36 @@ import { cookieOptions } from "../utils/features.js";
 import chatModel from "../models/chatModel.js";
 import requestModel from "../models/requestModel.js";
 import { New_REQUEST, REFRESH_CHATS } from "../constants/events.js";
+import { v2 as cloudinary } from "cloudinary";
 
-export const registerController = async (req, res) => {
+cloudinary.config({
+  cloud_name: "drtsskg28",
+  api_key: "118252269821872",
+  api_secret: "JoRta86nrICuXnlwEqGLzcHbe0A",
+});
+
+export const registerController = TryCatch(async (req, res) => {
   try {
     const { name, username, bio, password } = req.body;
+    const file = req.file;
 
-    const avatar = {
-      public_id: "123456",
-      url: "https://res.cloudinary.com/dx3w3v7g1/image/upload/v1630986827/avatars/123456.jpg",
-    };
+    if (!file) {
+      return res.status(400).json({ message: "Please upload a file" });
+    }
 
-    if (!name || !username || !bio || !password || !avatar) {
+    console.log(file);
+
+    // Upload image to Cloudinary
+    const result = await cloudinary.uploader.upload(file.path, {
+      folder: "privazer",
+      width: 150,
+      crop: "scale",
+    });
+
+    // Extract public ID and URL from Cloudinary response
+    const { public_id, secure_url } = result;
+
+    if (!name || !username || !bio || !password) {
       return res
         .status(400)
         .json({ message: "All fields are required from registerController" });
@@ -26,34 +45,34 @@ export const registerController = async (req, res) => {
     if (password.length < 6) {
       return res
         .status(400)
-        .json({ message: "Password must be atleast 6 characters long" });
+        .json({ message: "Password must be at least 6 characters long" });
     }
-    ///check if the user exist
+
+    // Check if the user exists
     const userExist = await userModel.findOne({ username });
     if (userExist) {
-      return res.status(400).json({ message: "User already exist" });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 8);
 
+    // Save user details including Cloudinary public ID and URL
     const user = await userModel.create({
       name,
       username,
       bio,
       password: hashedPassword,
-      avatar,
+      avatar: { public_id, url: secure_url },
     });
 
-    const result = await sendToken(
-      user,
-      "User registered successfully",
-      201,
-      res
-    );
+    return res
+      .status(201)
+      .json({ message: "User registered successfully", user });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
-};
+});
 
 export const loginController = async (req, res, next) => {
   try {
@@ -255,6 +274,8 @@ export const GetMyNotificationController = TryCatch(async (req, res, next) => {
 
 export const GetMyFriendsController = TryCatch(async (req, res, next) => {
   // console.log(req.user);
+  const { chatId } = req.query;
+
   const myChats = await chatModel.find({
     groupChat: false,
     members: { $in: [req.user] },
@@ -276,6 +297,29 @@ export const GetMyFriendsController = TryCatch(async (req, res, next) => {
       avatar: friend.avatar.url,
     };
   });
+
+  if (chatId) {
+    const chat = await chatModel.findById(chatId);
+
+    const availableFriends = friends.filter(
+      (friend) => !chat.members.includes(friend._id)
+    );
+
+    const allAvailableFriends = availableFriends.map((friend) => {
+      return {
+        _id: friend._id,
+        name: friend.name,
+        username: friend.username,
+        avatar: friend.avatar.url,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      allAvailableFriends,
+      count: allAvailableFriends.length,
+    });
+  }
 
   res.status(200).json({
     success: true,

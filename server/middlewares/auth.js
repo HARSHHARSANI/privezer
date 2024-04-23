@@ -20,3 +20,19 @@ export const isAuthenticated = TryCatch((req, res, next) => {
   next();
 });
 // Compare this snippet from server/utils/error.js:
+
+export const AdminOnly = TryCatch(async (req, res, next) => {
+  const token = req.cookies["privazer-admin-token"];
+  if (!token) {
+    return next(new ErrorHandler("Only Admin Can access this resource", 401));
+  }
+
+  const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+  console.log(decodedData);
+  if (decodedData.secretKey !== process.env.ADMIN_SECRET_KEY) {
+    return next(
+      new ErrorHandler("You are not authorized to access this route", 401)
+    );
+  }
+  next();
+});
