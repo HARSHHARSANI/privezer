@@ -6,7 +6,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { cookieOptions } from "../utils/features.js";
 import chatModel from "../models/chatModel.js";
 import requestModel from "../models/requestModel.js";
-import { New_REQUEST, REFRESH_CHATS } from "../constants/events.js";
+import { NEW_REQUEST, REFRESH_CHATS } from "../constants/events.js";
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({

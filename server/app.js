@@ -14,10 +14,22 @@ import {
 } from "./seeders/userSeeds.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import colors from "colors";
-
+import { Server } from "socket.io";
+import { createServer } from "http";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { v4 as uuid } from "uuid";
+import { getSockets } from "./lib/helper.js";
+import messageModel from "./models/messageModel.js";
+const userSocketId = new Map();
 dotenv.config();
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 connectDB();
 //createUser(10);
@@ -34,8 +46,68 @@ app.use("/users", userRoutes);
 app.use("/chats", chatRoute);
 app.use("/admin", adminRoutes);
 
+// io.use((socket, next) => {
+//   const userId = socket.handshake.auth.userId;
+//   if (!userId) {
+//     return next(new Error("Login is required"));
+//   }
+//   socket.userId = userId;
+//   next();
+// });
+
+io.on("connection", (socket) => {
+  const user = {
+    _id: socket.id,
+    name: "Anonymous",
+  };
+
+  userSocketId.set(user._id.toString(), socket.id);
+
+  console.log("a user connected", userSocketId);
+
+  socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
+    const messageForRealTime = {
+      _id: uuid(),
+      content: message,
+      sender: {
+        _id: user._id,
+        name: user.name,
+      },
+      chat: chatId,
+      createdAt: new Date().toISOString(),
+    };
+    const messageForDB = {
+      content: message,
+      sender: user._id,
+      chat: chatId,
+    };
+
+    const membersSocket = getSockets(members);
+
+    io.to(membersSocket).emit(NEW_MESSAGE, {
+      chatId,
+      message: messageForRealTime,
+    });
+
+    io.to(membersSocket).emit(NEW_MESSAGE_ALERT, {
+      chatId,
+    });
+
+    try {
+      await messageModel.create(messageForDB);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+    userSocketId.delete(user._id.toString());
+  });
+});
+
 app.use(errorMiddleware);
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(
     `Server is running on port ${process.env.PORT} in ${process.env.NODE_ENV}`
       .bgCyan.black

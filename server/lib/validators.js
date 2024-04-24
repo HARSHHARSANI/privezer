@@ -50,7 +50,7 @@ export const leaveGroupValidators = () => [
 
 export const sendAttachmentValidators = () => [
   body("chatId", "Please Enter ChatId").notEmpty(),
-  check("files", "Please Upload Avatar").notEmpty().isArray({ min: 1, max: 5 }),
+  // check("files", "Please Upload Avatar").notEmpty().isArray({ min: 1, max: 5 }),
 ];
 
 export const getMessageValidators = () => [

@@ -278,7 +278,6 @@ export const sendAttachmentController = TryCatch(async (req, res, next) => {
     );
   }
 
-  // Corrected: Use await with each promise
   const [chat, user] = await Promise.all([
     chatModel.findById(chatId),
     userModel.findById(req.user, "name"),
