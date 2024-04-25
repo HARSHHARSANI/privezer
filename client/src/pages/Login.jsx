@@ -2,6 +2,7 @@ import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import {
   Avatar,
   Button,
+  CircularProgress,
   Container,
   IconButton,
   Paper,
@@ -14,6 +15,11 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponent";
 import { backGround } from "../components/constants/color";
+import axios from "axios";
+import { server } from "../components/constants/config";
+import { useDispatch } from "react-redux";
+import { userExist } from "../redux/reducers/auth";
+import toast from "react-hot-toast";
 
 const validationSchema = Yup.object({
   username: Yup.string()
@@ -32,10 +38,20 @@ const validationSchema = Yup.object({
   bio: Yup.string().required("Bio is required"),
 });
 
+const CircularProgressWithLabel = ({ value }) => (
+  <Stack alignItems="center">
+    <CircularProgress variant="determinate" value={value} />
+    <Typography variant="caption">{`${Math.round(value)}%`}</Typography>
+  </Stack>
+);
+
 const Login = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0); // Added progress state
+  const dispatch = useDispatch();
 
   const toggleLogin = () => {
     setIsLogin(!isLogin);
@@ -47,9 +63,66 @@ const Login = () => {
     setImageUrl(URL.createObjectURL(file));
   };
 
-  const handleLogin = (values) => {
-    e.preventDefault();
-    console.log("Login values:", values);
+  const config = {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const handleLogin = async (values) => {
+    try {
+      setLoading(true);
+      setProgress(50); // Example progress update
+      const { data } = await axios.post(
+        `${server}/api/v1/users/login`,
+        {
+          username: values.username,
+          password: values.password,
+        },
+        config
+      );
+      console.log(data);
+      dispatch(userExist(data.user));
+      setLoading(false);
+      toast.success("Logged in successfully");
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      toast.error(error?.response?.data?.message || "An error occurred");
+    }
+  };
+
+  const handleSignup = async (values) => {
+    try {
+      setLoading(true);
+      setProgress(50); // Example progress update
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("username", values.username);
+      formData.append("bio", values.bio);
+      formData.append("password", values.password);
+      formData.append("avatar", imageFile);
+
+      const { data } = await axios.post(
+        `${server}/api/v1/users/register`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(data);
+      dispatch(userExist(true));
+      setLoading(false);
+      toast.success("Signed up successfully");
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      toast.error(error?.response?.data?.message || "An error occurred");
+    }
   };
 
   return (
@@ -110,8 +183,12 @@ const Login = () => {
                 : validationSchema
             }
             onSubmit={(values, { setSubmitting }) => {
-              values.imageUrl = imageUrl;
-              handleLogin(values);
+              if (isLogin) {
+                handleLogin(values);
+              } else {
+                values.imageUrl = imageUrl;
+                handleSignup(values);
+              }
               setSubmitting(false);
             }}
           >
@@ -215,30 +292,37 @@ const Login = () => {
                   className="error-message"
                 />
 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ marginTop: "1rem" }}
-                  type="submit"
-                  fullWidth
-                  disabled={isSubmitting}
-                >
-                  {isLogin ? "Log In" : "Sign Up"}
-                </Button>
+                {/* Conditional rendering based on loading state */}
+                {loading ? (
+                  <CircularProgressWithLabel value={progress} />
+                ) : (
+                  <>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ marginTop: "1rem" }}
+                      type="submit"
+                      fullWidth
+                      disabled={isSubmitting}
+                    >
+                      {isLogin ? "Log In" : "Sign Up"}
+                    </Button>
 
-                <Typography textAlign={"center"} m={"1rem"}>
-                  Or
-                </Typography>
+                    <Typography textAlign={"center"} m={"1rem"}>
+                      Or
+                    </Typography>
 
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ marginTop: "1rem" }}
-                  type="button"
-                  onClick={toggleLogin}
-                >
-                  {isLogin ? "Sign Up" : "Log In"}
-                </Button>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      sx={{ marginTop: "1rem" }}
+                      type="button"
+                      onClick={toggleLogin}
+                    >
+                      {isLogin ? "Sign Up" : "Log In"}
+                    </Button>
+                  </>
+                )}
               </Form>
             )}
           </Formik>

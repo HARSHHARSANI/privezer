@@ -21,6 +21,9 @@ import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
 import messageModel from "./models/messageModel.js";
 const userSocketId = new Map();
+import cors from "cors";
+import { v2 as cloudinary } from "cloudinary";
+
 dotenv.config();
 
 const app = express();
@@ -41,10 +44,20 @@ connectDB();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+      "http://localhost:3000",
+    ],
+    credentials: true, ///headers bhejne k liye
+  })
+);
 
-app.use("/users", userRoutes);
-app.use("/chats", chatRoute);
-app.use("/admin", adminRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/chats", chatRoute);
+app.use("/api/v1/admin", adminRoutes);
 
 // io.use((socket, next) => {
 //   const userId = socket.handshake.auth.userId;

@@ -15,7 +15,6 @@ export const isAuthenticated = TryCatch((req, res, next) => {
 
   req.user = decodedData.id;
   // console.log("req.user", req.user);
-
   // console.log(decodedData);
   next();
 });

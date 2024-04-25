@@ -20,7 +20,7 @@ const Profile = () => {
           border: "5px solid white",
         }}
       />
-      <ProfileCard heading="Bio" text="asdasd sdasd" />
+      <ProfileCard heading="Bio" text="Busy AF" />
 
       <ProfileCard
         heading="Username"

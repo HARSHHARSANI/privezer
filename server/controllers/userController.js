@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
-import { emitEvents, sendToken } from "../utils/features.js";
+import { emitEvents, sendToken, uploadFiles } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 import { TryCatch } from "../middlewares/error.js";
 import { cookieOptions } from "../utils/features.js";
@@ -8,6 +8,8 @@ import chatModel from "../models/chatModel.js";
 import requestModel from "../models/requestModel.js";
 import { NEW_REQUEST, REFRESH_CHATS } from "../constants/events.js";
 import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import path from "path";
 
 cloudinary.config({
   cloud_name: "drtsskg28",
@@ -24,29 +26,15 @@ export const registerController = TryCatch(async (req, res) => {
       return res.status(400).json({ message: "Please upload a file" });
     }
 
-    console.log(file);
+    console.log(name, username, bio, password);
+    console.log("file", file);
 
-    // Upload image to Cloudinary
-    const result = await cloudinary.uploader.upload(file.path, {
-      folder: "privazer",
-      width: 150,
-      crop: "scale",
-    });
+    const result = await uploadFiles([file]);
 
-    // Extract public ID and URL from Cloudinary response
-    const { public_id, secure_url } = result;
-
-    if (!name || !username || !bio || !password) {
-      return res
-        .status(400)
-        .json({ message: "All fields are required from registerController" });
-    }
-
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 6 characters long" });
-    }
+    const avatar = {
+      public_id: result[0].public_id,
+      url: result[0].url,
+    };
 
     // Check if the user exists
     const userExist = await userModel.findOne({ username });
@@ -62,7 +50,7 @@ export const registerController = TryCatch(async (req, res) => {
       username,
       bio,
       password: hashedPassword,
-      avatar: { public_id, url: secure_url },
+      avatar,
     });
 
     return res
@@ -70,7 +58,7 @@ export const registerController = TryCatch(async (req, res) => {
       .json({ message: "User registered successfully", user });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: error.message });
   }
 });
 
@@ -93,13 +81,13 @@ export const loginController = async (req, res, next) => {
     // console.log(user);
 
     if (!user) {
-      return next(new ErrorHandler("Invalid credentials 1 ", 400));
+      return next(new ErrorHandler("Invalid credentials ", 400));
     }
     ///compare the password
     const isPassword = await bcrypt.compare(password, user.password);
 
     if (!isPassword) {
-      return next(new ErrorHandler("Invalid credentials 2", 400));
+      return next(new ErrorHandler("Invalid credentials", 400));
     }
 
     sendToken(user, `Welcome Back ${user.name}`, 200, res);
