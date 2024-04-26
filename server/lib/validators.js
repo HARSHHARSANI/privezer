@@ -71,7 +71,7 @@ export const renameGroupValidators = () => [
 ];
 
 export const searchUserValidators = () => [
-  query("name", "Please Enter Username").notEmpty(),
+  query("name", "Please Enter Username"),
 ];
 
 export const sendRequestValidators = () => [

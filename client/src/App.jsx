@@ -26,9 +26,10 @@ function App() {
 
   useEffect(() => {
     axios
-      .get(`${server}/api/v1/users/profile`)
+      .get(`${server}/api/v1/users/profile`, { withCredentials: true })
       .then((res) => {
-        dispatch(userExist(res.data));
+        console.log(res.data);
+        dispatch(userExist(res.data.userFound));
       })
       .catch((err) => {
         dispatch(userNotExist());

@@ -82,10 +82,10 @@ const Login = () => {
         },
         config
       );
-      console.log(data);
+      // console.log(data);
       dispatch(userExist(data.user));
       setLoading(false);
-      toast.success("Logged in successfully");
+      toast.success(data.message);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -117,7 +117,7 @@ const Login = () => {
       console.log(data);
       dispatch(userExist(true));
       setLoading(false);
-      toast.success("Signed up successfully");
+      toast.success(data.message);
     } catch (error) {
       console.log(error);
       setLoading(false);

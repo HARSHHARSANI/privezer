@@ -11,6 +11,7 @@ import {
   createMessage,
   createMessageInAChat,
   createSingleChats,
+  createUser,
 } from "./seeders/userSeeds.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import colors from "colors";
@@ -35,9 +36,9 @@ const io = new Server(server, {
 });
 
 connectDB();
-//createUser(10);
+// createUser(10);
 // createSampleChats(10);
-//createSingleChats(10);
+// createSingleChats(10);
 //createGroupChats(10);
 //  createMessage(10);
 // createMessageInAChat(10, "6623490aa3ad1fa4ca1d3200");

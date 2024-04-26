@@ -1,43 +1,46 @@
-import React, { Suspense, lazy, useState } from "react";
 import {
-  Box,
-  AppBar,
-  Typography,
-  Toolbar,
-  IconButton,
-  Tooltip,
-  Backdrop,
-} from "@mui/material";
-import { orange } from "../constants/color";
-import {
-  Menu as MenuIcon,
-  Search as SearchIcon,
   Add as AddIcon,
   Group as GroupIcon,
   Logout as LogoutIcon,
+  Menu as MenuIcon,
   NotificationAdd as NotificationIcon,
+  Search as SearchIcon,
 } from "@mui/icons-material";
+import {
+  AppBar,
+  Backdrop,
+  Box,
+  IconButton,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import axios from "axios";
+import React, { Suspense, lazy, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import NewGroups from "../specific/NewGroups";
+import { userNotExist } from "../../redux/reducers/auth";
+import { setIsMobile } from "../../redux/reducers/misc";
+import { server } from "../constants/config";
+import { setIsSearch } from "../../redux/reducers/misc";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
 const GroupDialog = lazy(() => import("../specific/NewGroups"));
 const NotificationDialog = lazy(() => import("../specific/Notification"));
 
 const Header = () => {
-  const [isSearch, setIsSearch] = useState(false);
   const [isGroup, setIsGroup] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
+
+  const { isSearch } = useSelector((state) => state.misc);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleMobile = () => {
-    setIsMobile(!isMobile);
-  };
+  const handleMobile = () => dispatch(setIsMobile(true));
 
-  const openSearchDialog = () => {
-    setIsSearch(!isSearch);
-  };
+  const openSearchDialog = () => dispatch(setIsSearch(true));
 
   const openNewGroup = () => {
     setIsGroup(!isGroup);
@@ -49,8 +52,20 @@ const Header = () => {
 
   const navigateToGroup = () => navigate("/groups");
 
-  const logoutHandler = () => {
-    console.log("logoutHandler");
+  const logoutHandler = async () => {
+    try {
+      console.log("logout");
+      const { data } = await axios.get(`${server}/api/v1/users/logout`, {
+        withCredentials: true,
+      });
+      localStorage.removeItem("privezer-token");
+      dispatch(userNotExist());
+      navigate("/login");
+      toast.success(data.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (

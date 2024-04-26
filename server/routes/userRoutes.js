@@ -38,7 +38,7 @@ router.post(
 ///user must be logged in
 router.get("/profile", isAuthenticated, getMyProfile);
 router.get("/logout", isAuthenticated, logoutController);
-router.post(
+router.get(
   "/searchuser",
   isAuthenticated,
   searchUserValidators(),
@@ -63,6 +63,6 @@ router.get(
 
 router.get("/notification", isAuthenticated, GetMyNotificationController);
 
-router.get("/friends" , isAuthenticated, GetMyFriendsController)
+router.get("/friends", isAuthenticated, GetMyFriendsController);
 
 export default router;
