@@ -13,9 +13,14 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLazySearchUserQuery } from "../../redux/api/api";
+import {
+  useLazySearchUserQuery,
+  useSendFriendRequestMutation,
+} from "../../redux/api/api";
 import { setIsSearch } from "../../redux/reducers/misc";
 import UserItem from "../shared/UserItem";
+import { toast } from "react-hot-toast";
+import { userAsyncMutation } from "../hooks/hook";
 
 const Search = () => {
   const search = useInputValidation("");
@@ -23,18 +28,26 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
-
-  const addFriendHandler = () => {
-    console.log("addFriendHandler");
-  };
-
   const { isSearch } = useSelector((state) => state.misc);
 
   const [searchUser] = useLazySearchUserQuery();
+  const [sendFriendRequest, isLoadingSendFriendRequest] = userAsyncMutation(
+    useSendFriendRequestMutation
+  );
 
   const handleSearchClose = () => dispatch(setIsSearch(false));
 
-  const isLoadingSendFriendRequest = false;
+  const addFriendHandler = async (id) => {
+    await sendFriendRequest(
+      "Sending Friend Request",
+      { id },
+      {
+        onSuccess: (data) => {
+          toast.success(data.message);
+        },
+      }
+    );
+  };
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
@@ -42,7 +55,6 @@ const Search = () => {
       searchUser(search.value)
         .unwrap()
         .then((data) => {
-          console.log(data.users);
           setUsers(data.users);
           setLoading(false);
         })

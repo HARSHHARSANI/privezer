@@ -50,7 +50,7 @@ const Login = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0); // Added progress state
+  const [progress, setProgress] = useState(0);
   const dispatch = useDispatch();
 
   const toggleLogin = () => {
@@ -96,7 +96,7 @@ const Login = () => {
   const handleSignup = async (values) => {
     try {
       setLoading(true);
-      setProgress(50); // Example progress update
+      setProgress(50);
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("username", values.username);

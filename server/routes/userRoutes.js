@@ -53,7 +53,7 @@ router.put(
   sendRequestController
 );
 
-router.get(
+router.put(
   "/acceptrequest",
   isAuthenticated,
   acceptRequestValidators(),

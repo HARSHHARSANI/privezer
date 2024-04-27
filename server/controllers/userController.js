@@ -1,15 +1,17 @@
 import bcrypt from "bcrypt";
-import userModel from "../models/userModel.js";
-import { emitEvents, sendToken, uploadFiles } from "../utils/features.js";
-import { ErrorHandler } from "../utils/utility.js";
+import { v2 as cloudinary } from "cloudinary";
+import { NEW_REQUEST, REFRESH_CHATS } from "../constants/events.js";
 import { TryCatch } from "../middlewares/error.js";
-import { cookieOptions } from "../utils/features.js";
 import chatModel from "../models/chatModel.js";
 import requestModel from "../models/requestModel.js";
-import { NEW_REQUEST, REFRESH_CHATS } from "../constants/events.js";
-import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
-import path from "path";
+import userModel from "../models/userModel.js";
+import {
+  cookieOptions,
+  emitEvents,
+  sendToken,
+  uploadFiles,
+} from "../utils/features.js";
+import { ErrorHandler } from "../utils/utility.js";
 
 cloudinary.config({
   cloud_name: "drtsskg28",
@@ -155,6 +157,8 @@ export const searchUserController = TryCatch(async (req, res, next) => {
 export const sendRequestController = TryCatch(async (req, res, next) => {
   const { id } = req.body;
 
+  console.log("id in sendRequestController", id);
+
   ///check if the request is already sent
   const requestExist = await requestModel.findOne({
     $or: [
@@ -174,7 +178,7 @@ export const sendRequestController = TryCatch(async (req, res, next) => {
 
   await request.save();
 
-  emitEvents(req.user, New_REQUEST, [id]);
+  emitEvents(req.user, NEW_REQUEST, [id]);
 
   res.status(200).json({
     success: true,
@@ -186,7 +190,7 @@ export const sendRequestController = TryCatch(async (req, res, next) => {
 export const acceptRequestController = TryCatch(async (req, res, next) => {
   const { requestId, accept } = req.body;
 
-  // console.log(requestId, accept);
+  console.log("requestId, accept", requestId, accept);
 
   const request = await requestModel
     .findById(requestId)
@@ -234,13 +238,9 @@ export const acceptRequestController = TryCatch(async (req, res, next) => {
 });
 
 export const GetMyNotificationController = TryCatch(async (req, res, next) => {
-  // console.log(req.user);
-
   const requests = await requestModel
     .find({ receiver: req.user })
     .populate("sender", "name username avatar");
-
-  // console.log("requests", requests);
 
   const allRequests = requests.map(({ _id, sender }) => {
     return {
@@ -253,6 +253,8 @@ export const GetMyNotificationController = TryCatch(async (req, res, next) => {
       },
     };
   });
+
+  console.log(allRequests);
 
   res.status(200).json({
     success: true,
