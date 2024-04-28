@@ -68,7 +68,7 @@ export const loginController = async (req, res, next) => {
   try {
     const { username, password } = req.body;
 
-    // console.log("username --->", username, "password --->", password);
+    console.log("username --->", username, "password --->", password);
     ///check input fields
     if (!username || !password) {
       return next(

@@ -1,10 +1,12 @@
 import { ErrorHandler } from "../utils/utility.js";
 import { TryCatch } from "./error.js";
 import jwt from "jsonwebtoken";
+import { PRIVAZER_TOKEN } from "../config.js";
+import userModel from "../models/userModel.js";
 
 export const isAuthenticated = TryCatch((req, res, next) => {
   //   console.log("req.cookies", req.cookies["privazer-token"]);
-  const token = req.cookies["privazer-token"];
+  const token = req.cookies[PRIVAZER_TOKEN];
 
   if (!token) {
     return next(new ErrorHandler("Please login to access this resource", 401));
@@ -35,3 +37,46 @@ export const AdminOnly = TryCatch(async (req, res, next) => {
   }
   next();
 });
+
+export const socketAuth = async (err, socket, next) => {
+  try {
+    console.log("inside socket auth");
+
+    if (err) return next(err);
+
+    const authToken = socket.request.cookies["privazer-token"]; // Correctly assign authToken
+
+    // console.log(socket.request.cookies);
+
+    // console.log(authToken, "authToken");
+
+    if (!authToken) {
+      return next(
+        new ErrorHandler("Please login to access this resource 1", 401)
+      );
+    }
+
+    const decodedData = jwt.verify(authToken, process.env.JWT_SECRET);
+
+    // console.log(decodedData, "decodedData");
+
+    const user = await userModel.findById(decodedData.id);
+
+    if (!user) {
+      return next(
+        new ErrorHandler("Please login to access this resource 2", 401)
+      );
+    }
+
+    socket.user = user;
+
+    // console.log(socket.user);
+
+    return next();
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ErrorHandler("Please login to access this resource 3", 401)
+    );
+  }
+};

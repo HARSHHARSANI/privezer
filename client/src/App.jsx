@@ -19,6 +19,7 @@ import { server } from "./components/constants/config";
 import { useDispatch, useSelector } from "react-redux";
 import { userExist, userNotExist } from "./redux/reducers/auth";
 import { Toaster } from "react-hot-toast";
+import { SocketProvider } from "./socket";
 
 function App() {
   const { user, loader } = useSelector((state) => state.auth);
@@ -44,7 +45,13 @@ function App() {
     <BrowserRouter>
       <Suspense fallback={<LayoutLoaders />}>
         <Routes>
-          <Route element={<ProtectRoute user={user} />}>
+          <Route
+            element={
+              <SocketProvider>
+                <ProtectRoute user={user} />
+              </SocketProvider>
+            }
+          >
             <Route path="/" element={<Home />} />
             <Route path="/chat/:chatId" element={<Chat />} />
             <Route path="/groups" element={<Group />} />

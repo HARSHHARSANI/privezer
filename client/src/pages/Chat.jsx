@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import AppLayout from "../components/layout/AppLayout";
-import { Stack, IconButton } from "@mui/material";
+import { Stack, IconButton, Skeleton } from "@mui/material";
 import {
   errorColor,
   grayColor,
@@ -18,15 +18,46 @@ import { InputBox } from "../components/styles/StyledComponent";
 import FileMenu from "../components/dialogs/FileMenu";
 import { sampleMessage } from "../components/constants/SampleData";
 import MessageComponent from "../components/shared/MessageComponent";
+import { getSocket } from "../socket";
+import { NEW_MESSAGE } from "../components/constants/events";
+import { useChatDetailsQuery } from "../redux/api/api";
 
-const Chat = () => {
+const Chat = ({ chatId }) => {
   const containerRef = useRef(null);
+
+  const socket = getSocket();
+
+  const [message, setMessage] = useState("");
+
+  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
+
+  // console.log("chatDetails.data", chatDetails.data.chat.members);
 
   const user = {
     id: "1",
     name: "John Doe",
   };
-  return (
+
+  // console.log(members, "members");
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    if (!message.trim()) return;
+
+    socket.emit(NEW_MESSAGE, {
+      chatId,
+      members: chatDetails?.data?.chat?.members,
+      message,
+    });
+
+    setMessage("");
+
+    // containerRef.current.scrollTop = containerRef.current.scrollHeight;
+  };
+  return chatDetails.isLoading ? (
+    <Skeleton />
+  ) : (
     <>
       <Stack
         ref={containerRef}
@@ -48,6 +79,7 @@ const Chat = () => {
         style={{
           height: "10%",
         }}
+        onSubmit={submitHandler}
       >
         <Stack
           direction={"row"}
@@ -67,7 +99,11 @@ const Chat = () => {
           >
             <AttachFileIcon />
           </IconButton>
-          <InputBox placeholder="Type Message here ..." />
+          <InputBox
+            placeholder="Type Message here ..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
           <IconButton
             type="submit"
             sx={{

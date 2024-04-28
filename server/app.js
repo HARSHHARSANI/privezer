@@ -1,18 +1,10 @@
 import express from "express";
 import userRoutes from "./routes/userRoutes.js";
-
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { errorMiddleware } from "./middlewares/error.js";
 import chatRoute from "./routes/chatRoutes.js";
 import { connectDB } from "./utils/features.js";
-import {
-  createGroupChats,
-  createMessage,
-  createMessageInAChat,
-  createSingleChats,
-  createUser,
-} from "./seeders/userSeeds.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import colors from "colors";
 import { Server } from "socket.io";
@@ -21,17 +13,24 @@ import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
 import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
 import messageModel from "./models/messageModel.js";
-const userSocketId = new Map();
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
+import { socketAuth } from "./middlewares/auth.js";
 
+export const userSocketId = new Map();
 dotenv.config();
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+      "http://localhost:3000",
+    ],
+    withcreadentials: true,
+    credentials: true,
   },
 });
 
@@ -52,7 +51,7 @@ app.use(
       "http://localhost:4173",
       "http://localhost:3000",
     ],
-    credentials: true, ///headers bhejne k liye
+    credentials: true,
   })
 );
 
@@ -60,21 +59,17 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/chats", chatRoute);
 app.use("/api/v1/admin", adminRoutes);
 
-// io.use((socket, next) => {
-//   const userId = socket.handshake.auth.userId;
-//   if (!userId) {
-//     return next(new Error("Login is required"));
-//   }
-//   socket.userId = userId;
-//   next();
-// });
+io.use((socket, next) => {
+  cookieParser()(
+    socket.request,
+    socket.request.res,
+    async (err) => await socketAuth(err, socket, next)
+  );
+});
 
 io.on("connection", (socket) => {
-  const user = {
-    _id: socket.id,
-    name: "Anonymous",
-  };
-
+  const user = socket.user;
+  // console.log("user from socket", user);
   userSocketId.set(user._id.toString(), socket.id);
 
   console.log("a user connected", userSocketId);
@@ -95,6 +90,8 @@ io.on("connection", (socket) => {
       sender: user._id,
       chat: chatId,
     };
+
+    console.log("Emitting", messageForRealTime);
 
     const membersSocket = getSockets(members);
 

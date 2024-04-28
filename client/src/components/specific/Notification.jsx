@@ -23,7 +23,7 @@ const Notification = () => {
 
   const { isNotification } = useSelector((state) => state.misc);
 
-  console.log("isNotification", isNotification);
+  // console.log("isNotification", isNotification);
 
   const { isLoading, data, error, isError } = useGetNotificationsQuery();
 
@@ -34,6 +34,7 @@ const Notification = () => {
   const handleNotificationClose = () => disptach(setIsNotification(false));
 
   const friendRequestHandler = async ({ _id, accept }) => {
+    disptach(setIsNotification(false));
     try {
       const res = await acceptFriendRequest({ requestId: _id, accept });
 
@@ -41,8 +42,8 @@ const Notification = () => {
         console.log("Use Socket to update the notification list");
         toast.success(res?.data?.message);
       } else {
-        console.log(res?.data?.message);
-        toast.error(res?.data?.message);
+        console.log(res?.data?.error || "An error occured");
+        toast.error(error?.message || "An error occured");
       }
     } catch (error) {
       console.log(error);
