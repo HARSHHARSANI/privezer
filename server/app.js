@@ -16,6 +16,7 @@ import messageModel from "./models/messageModel.js";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
 import { socketAuth } from "./middlewares/auth.js";
+import { createMessage, createMessageInAChat } from "./seeders/userSeeds.js";
 
 export const userSocketId = new Map();
 dotenv.config();
@@ -39,7 +40,7 @@ connectDB();
 // createSampleChats(10);
 // createSingleChats(10);
 //createGroupChats(10);
-//  createMessage(10);
+// createMessage(10);
 // createMessageInAChat(10, "6623490aa3ad1fa4ca1d3200");
 
 app.use(express.json());

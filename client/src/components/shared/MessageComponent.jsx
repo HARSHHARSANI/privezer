@@ -5,8 +5,11 @@ import { fileFormat } from "../../lib/features";
 import RenderAttachment from "./RenderAttachment";
 
 const MessageComponent = ({ message, user }) => {
-  const { attachments = [], _id, sender, content, createdAt } = message;
-  const sameSender = sender?._id === user?.id;
+  // console.log(message, "message");
+  const { attachments = [], sender, content, createdAt } = message || {};
+
+  const sameSender = sender?._id === user?._id;
+
   const TimeAgo = moment(createdAt).fromNow();
   return (
     <div
@@ -21,7 +24,7 @@ const MessageComponent = ({ message, user }) => {
     >
       {!sameSender && (
         <Typography variant="caption" color="#2694ab" fontWeight={"600"}>
-          {sender.name}
+          {sender?.name}
         </Typography>
       )}
       {content && (
