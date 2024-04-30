@@ -1,10 +1,11 @@
+import { useInfiniteScrollTop } from "6pp";
 import {
   AttachFile as AttachFileIcon,
   Send as SendFileIcon,
 } from "@mui/icons-material";
 import { IconButton, Skeleton, Stack } from "@mui/material";
 import React, { useCallback, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { grayColor, secondaryColor } from "../components/constants/color";
 import { NEW_MESSAGE } from "../components/constants/events";
 import FileMenu from "../components/dialogs/FileMenu";
@@ -13,19 +14,21 @@ import AppLayout from "../components/layout/AppLayout";
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/StyledComponent";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
+import { setIsFileMenu } from "../redux/reducers/misc";
 import { getSocket } from "../socket";
-import { useInfiniteScrollTop } from "6pp";
 
 const Chat = ({ chatId }) => {
   const containerRef = useRef(null);
 
   const { user } = useSelector((state) => state.auth);
+  const disptach = useDispatch();
 
   const socket = getSocket();
 
   const [message, setMessage] = useState("");
   const [page, setPage] = useState(1);
   const [messages, setMessages] = useState([]);
+  const [fileMenuAnchor, setFileMenuAnchor] = useState(null);
 
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
 
@@ -80,6 +83,11 @@ const Chat = ({ chatId }) => {
 
   const allMessages = [...oldMessages, ...messages];
 
+  const handleFileOpen = (e) => {
+    disptach(setIsFileMenu(true));
+    setFileMenuAnchor(e.currentTarget);
+  };
+
   return chatDetails.isLoading ? (
     <Skeleton />
   ) : (
@@ -121,6 +129,7 @@ const Chat = ({ chatId }) => {
 
               rotate: "30deg",
             }}
+            onClick={handleFileOpen}
           >
             <AttachFileIcon />
           </IconButton>
@@ -146,7 +155,7 @@ const Chat = ({ chatId }) => {
           </IconButton>
         </Stack>
       </form>
-      <FileMenu />
+      <FileMenu anchorE1={fileMenuAnchor} chatId={chatId} />
     </>
   );
 };

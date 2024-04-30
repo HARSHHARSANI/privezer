@@ -21,6 +21,12 @@ import { createMessage, createMessageInAChat } from "./seeders/userSeeds.js";
 export const userSocketId = new Map();
 dotenv.config();
 
+cloudinary.config({
+  cloud_name: "drtsskg28",
+  api_key: "118252269821872",
+  api_secret: "JoRta86nrICuXnlwEqGLzcHbe0A",
+});
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -34,6 +40,8 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+
+app.set("io", io);
 
 connectDB();
 // createUser(10);

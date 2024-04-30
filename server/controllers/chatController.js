@@ -9,8 +9,19 @@ import { TryCatch } from "../middlewares/error.js";
 import chatModel from "../models/chatModel.js";
 import messageModel from "../models/messageModel.js";
 import userModel from "../models/userModel.js";
-import { deleteFilesFromCloudinary, emitEvents } from "../utils/features.js";
+import {
+  deleteFilesFromCloudinary,
+  emitEvents,
+  uploadFiles,
+} from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: "drtsskg28",
+  api_key: "118252269821872",
+  api_secret: "JoRta86nrICuXnlwEqGLzcHbe0A",
+});
 
 export const newGroupChatController = TryCatch(async (req, res, next) => {
   const { name, members } = req.body;
@@ -266,7 +277,11 @@ export const leaveGroupController = TryCatch(async (req, res, next) => {
 export const sendAttachmentController = TryCatch(async (req, res, next) => {
   const { chatId } = req.body;
 
+  console.log(chatId, "chatId");
+
   const files = req.files || [];
+
+  console.log(files, "files");
 
   if (files.length < 1) {
     return next(new ErrorHandler("No file attached", 400));
@@ -292,7 +307,9 @@ export const sendAttachmentController = TryCatch(async (req, res, next) => {
   }
 
   //upload files here
-  const attachments = [];
+  const attachments = await uploadFiles(files);
+
+  console.log(attachments, "attachments");
 
   const messageForDB = {
     content: "",
@@ -311,7 +328,9 @@ export const sendAttachmentController = TryCatch(async (req, res, next) => {
 
   const message = await messageModel.create(messageForDB);
 
-  emitEvents(req, NEW_ATTACHMENT, chat.members, {
+  console.log(message, "message");
+
+  emitEvents(req, NEW_MESSAGE, chat.members, {
     message: messageForRealTime,
     chatId,
   });

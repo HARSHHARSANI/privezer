@@ -178,7 +178,7 @@ export const sendRequestController = TryCatch(async (req, res, next) => {
 
   await request.save();
 
-  emitEvents(req.user, NEW_REQUEST, [id]);
+  emitEvents(req, NEW_REQUEST, [id]);
 
   res.status(200).json({
     success: true,

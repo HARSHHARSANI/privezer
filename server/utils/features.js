@@ -2,7 +2,13 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { v4 as uuid } from "uuid";
 import { v2 as cloudinary } from "cloudinary";
-import { getBase64 } from "../lib/helper.js";
+import { getBase64, getSockets } from "../lib/helper.js";
+
+cloudinary.config({
+  cloud_name: "drtsskg28",
+  api_key: "118252269821872",
+  api_secret: "JoRta86nrICuXnlwEqGLzcHbe0A",
+});
 
 export const cookieOptions = {
   maxAge: 2 * 24 * 60 * 60 * 1000,
@@ -41,7 +47,9 @@ export const sendToken = (user, message, statusCode, res) => {
 };
 
 export const emitEvents = (req, event, users, data) => {
-  console.log("emitting event", event);
+  const io = req.app.get("io");
+  const userSocket = getSockets(users);
+  io.to(userSocket).emit(event, data);
 };
 
 export const uploadFiles = async (files = []) => {
@@ -74,6 +82,7 @@ export const uploadFiles = async (files = []) => {
     });
     return formattedResult;
   } catch (error) {
+    console.log(error);
     throw new Error("error uploading files to cloudinary ", error);
   }
 };
