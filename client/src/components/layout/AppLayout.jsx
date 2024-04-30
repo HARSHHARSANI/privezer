@@ -12,7 +12,10 @@ import { setIsMobile } from "../../redux/reducers/misc";
 import { useErrors, useSocketEvents } from "../hooks/hook";
 import { getSocket } from "../../socket";
 import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../constants/events";
-import { incrementNotificationCount } from "../../redux/reducers/chat";
+import {
+  incrementNotificationCount,
+  setNewMessageAlert,
+} from "../../redux/reducers/chat";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
@@ -22,7 +25,9 @@ const AppLayout = () => (WrappedComponent) => {
     const socket = getSocket();
 
     const { user } = useSelector((state) => state.auth);
+    const { NewMessageAlert } = useSelector((state) => state.chat);
 
+    console.log(NewMessageAlert, "NewMessageAlert");
     // console.log("socket.id", socket.id);
 
     const dispatch = useDispatch();
@@ -31,9 +36,13 @@ const AppLayout = () => (WrappedComponent) => {
 
     const { isLoading, data, isError, refetch, error } = useMyChatsQuery("");
 
-    const NewMessagesAlertHandler = useCallback(({ chatId }) => {
-      console.log("NewMessagesAlertHandler", chatId);
-    }, []);
+    const NewMessagesAlertHandler = useCallback(
+      (data) => {
+        dispatch(setNewMessageAlert(data));
+        console.log("NewMessagesAlertHandler", data.chatId);
+      },
+      [dispatch]
+    );
 
     const NewRequestHandler = useCallback(() => {
       dispatch(incrementNotificationCount());
@@ -71,6 +80,7 @@ const AppLayout = () => (WrappedComponent) => {
               chats={data?.transformedChats}
               chatId={chatId}
               handleDeleteChat={handleDeleteChat}
+              newMessagesAlert={NewMessageAlert}
             />
           </Drawer>
         )}
@@ -92,6 +102,7 @@ const AppLayout = () => (WrappedComponent) => {
                 chats={data?.transformedChats}
                 chatId={chatId}
                 handleDeleteChat={handleDeleteChat}
+                newMessagesAlert={NewMessageAlert}
               />
             )}
           </Grid>

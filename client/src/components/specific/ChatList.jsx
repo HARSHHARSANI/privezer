@@ -10,6 +10,7 @@ const ChatList = ({
   newMessagesAlert = [],
   handleDeleteChat,
 }) => {
+  console.log(newMessagesAlert, "newMessagesAlert");
   return (
     <Stack width={w} direction={"column"} overflow={"auto"} height={"100%"}>
       {chats.map((data, index) => {

@@ -27,10 +27,10 @@ const userAsyncMutation = (mutationHook) => {
     try {
       const res = await mutate(...args);
       if (res.data) {
-        setData(res.data);
         toast.success(res.data.message || "Updated Data Successfully", {
           id: toastId,
         });
+        setData(res.data);
       } else {
         toast.error(
           res?.error?.data?.message ||

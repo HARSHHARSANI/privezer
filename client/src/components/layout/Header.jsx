@@ -28,6 +28,7 @@ import {
   setIsSearch,
 } from "../../redux/reducers/misc";
 import { server } from "../constants/config";
+import { resetNotificationCount } from "../../redux/reducers/chat";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
 const GroupDialog = lazy(() => import("../specific/NewGroups"));
@@ -52,6 +53,7 @@ const Header = () => {
 
   const openNotification = () => {
     dispatch(setIsNotification(true));
+    dispatch(resetNotificationCount());
   };
 
   const navigateToGroup = () => navigate("/groups");
