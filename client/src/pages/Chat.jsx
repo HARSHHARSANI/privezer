@@ -16,6 +16,10 @@ import { InputBox } from "../components/styles/StyledComponent";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
 import { setIsFileMenu } from "../redux/reducers/misc";
 import { getSocket } from "../socket";
+import {
+  removeNewMessageAlert,
+  setNewMessageAlert,
+} from "../redux/reducers/chat";
 
 const Chat = ({ chatId }) => {
   const containerRef = useRef(null);
@@ -32,6 +36,9 @@ const Chat = ({ chatId }) => {
 
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
   const oldMessagesChunk = useGetMessagesQuery({ chatId, page: page });
+
+  console.log(oldMessagesChunk, "oldMessagesChunk");
+
   const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
     containerRef,
     oldMessagesChunk.data?.totalPages,
@@ -40,16 +47,22 @@ const Chat = ({ chatId }) => {
     oldMessagesChunk.data?.messages
   );
 
-  const NewMessagesListener = useCallback(
-    (data) => {
-      if (data.chatId !== chatId) return;
-      //console.log("NewMessagesHandler", data);
-      setMessages((prev) => [...prev, data.message]);
-    },
-    [chatId]
-  );
+  console.log(oldMessages, "oldMessages");
 
-  const eventHandler = { [NEW_MESSAGE]: NewMessagesListener };
+  const newMessageHandler = useCallback((data) => {
+    if (data.chatId !== chatId) return;
+    setMessages((prev) => [...prev, data.message]);
+  }, []);
+
+  // const newMessageAlertHandler = useCallback(
+  //   (data) => {
+  //     if (data.chatId === chatId) return;
+  //     disptach(setNewMessageAlert(data));
+  //   },
+  //   [chatId]
+  // );
+
+  const eventHandler = { [NEW_MESSAGE]: newMessageHandler };
 
   useSocketEvents(socket, eventHandler);
 
@@ -82,6 +95,7 @@ const Chat = ({ chatId }) => {
   };
 
   useEffect(() => {
+    disptach(removeNewMessageAlert(chatId));
     return () => {
       setMessage("");
       setMessages([]);

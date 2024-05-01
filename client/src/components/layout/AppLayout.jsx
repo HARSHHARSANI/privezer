@@ -1,21 +1,21 @@
-import React, { useCallback } from "react";
-import Header from "./Header";
-import Title from "../shared/Title";
 import { Drawer, Grid, Skeleton } from "@mui/material";
-import ChatList from "../specific/ChatList";
-import { Samplechats } from "../constants/SampleData";
-import { useParams } from "react-router-dom";
-import Profile from "../specific/Profile";
-import { useMyChatsQuery } from "../../redux/api/api";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsMobile } from "../../redux/reducers/misc";
-import { useErrors, useSocketEvents } from "../hooks/hook";
-import { getSocket } from "../../socket";
-import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../constants/events";
+import { useParams } from "react-router-dom";
+import { getOrSaveFromStorage } from "../../lib/features";
+import { useMyChatsQuery } from "../../redux/api/api";
 import {
   incrementNotificationCount,
   setNewMessageAlert,
 } from "../../redux/reducers/chat";
+import { setIsMobile } from "../../redux/reducers/misc";
+import { getSocket } from "../../socket";
+import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../constants/events";
+import { useErrors, useSocketEvents } from "../hooks/hook";
+import Title from "../shared/Title";
+import ChatList from "../specific/ChatList";
+import Profile from "../specific/Profile";
+import Header from "./Header";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
@@ -25,10 +25,11 @@ const AppLayout = () => (WrappedComponent) => {
     const socket = getSocket();
 
     const { user } = useSelector((state) => state.auth);
-    const { NewMessageAlert } = useSelector((state) => state.chat);
+    const { newMessageAlert } = useSelector((state) => state.chat);
 
-    console.log(NewMessageAlert, "NewMessageAlert");
     // console.log("socket.id", socket.id);
+
+    console.log(newMessageAlert, "newMessageAlert");
 
     const dispatch = useDispatch();
 
@@ -38,10 +39,10 @@ const AppLayout = () => (WrappedComponent) => {
 
     const NewMessagesAlertHandler = useCallback(
       (data) => {
+        if (data.chatId === chatId) return;
         dispatch(setNewMessageAlert(data));
-        console.log("NewMessagesAlertHandler", data.chatId);
       },
-      [dispatch]
+      [chatId]
     );
 
     const NewRequestHandler = useCallback(() => {
@@ -56,6 +57,13 @@ const AppLayout = () => (WrappedComponent) => {
     useSocketEvents(socket, eventHandlers);
 
     useErrors([{ isError, error }]);
+
+    useEffect(() => {
+      getOrSaveFromStorage({
+        key: NEW_MESSAGE_ALERT,
+        value: newMessageAlert,
+      });
+    }, [newMessageAlert]);
 
     const handleDeleteChat = (e, _id, GroupChat) => {
       e.preventDefault();
@@ -80,7 +88,7 @@ const AppLayout = () => (WrappedComponent) => {
               chats={data?.transformedChats}
               chatId={chatId}
               handleDeleteChat={handleDeleteChat}
-              newMessagesAlert={NewMessageAlert}
+              newMessagesAlert={newMessageAlert}
             />
           </Drawer>
         )}
@@ -102,7 +110,7 @@ const AppLayout = () => (WrappedComponent) => {
                 chats={data?.transformedChats}
                 chatId={chatId}
                 handleDeleteChat={handleDeleteChat}
-                newMessagesAlert={NewMessageAlert}
+                newMessagesAlert={newMessageAlert}
               />
             )}
           </Grid>

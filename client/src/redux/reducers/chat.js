@@ -4,7 +4,7 @@ const chatSlice = createSlice({
   name: "chat",
   initialState: {
     notificationCount: 0,
-    NewMessageAlert: [
+    newMessageAlert: [
       {
         chatId: "",
         count: 0,
@@ -25,19 +25,26 @@ const chatSlice = createSlice({
     },
 
     setNewMessageAlert: (state, action) => {
-      const { chatId } = action.payload;
-      const index = state.NewMessageAlert.findIndex(
+      const chatId = action.payload.chatId;
+
+      const index = state.newMessageAlert.findIndex(
         (item) => item.chatId === chatId
       );
 
       if (index !== -1) {
-        state.NewMessageAlert[index].count += 1;
+        state.newMessageAlert[index].count += 1;
       } else {
-        state.NewMessageAlert.push({
+        state.newMessageAlert.push({
           chatId,
           count: 1,
         });
       }
+    },
+
+    removeNewMessageAlert: (state, action) => {
+      state.newMessageAlert = state.newMessageAlert.filter(
+        (item) => item.chatId !== action.payload
+      );
     },
   },
 });
@@ -48,4 +55,5 @@ export const {
   decrementNotificationCount,
   resetNotificationCount,
   setNewMessageAlert,
+  removeNewMessageAlert,
 } = chatSlice.actions;
