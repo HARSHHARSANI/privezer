@@ -9,17 +9,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { grayColor, secondaryColor } from "../components/constants/color";
 import { NEW_MESSAGE } from "../components/constants/events";
 import FileMenu from "../components/dialogs/FileMenu";
-import { useErrors, useSocketEvents } from "../components/hooks/hook";
+import { useSocketEvents } from "../components/hooks/hook";
 import AppLayout from "../components/layout/AppLayout";
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/StyledComponent";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
+import {
+  removeNewMessagesAlert,
+  setNewMessagesAlert,
+} from "../redux/reducers/chat";
 import { setIsFileMenu } from "../redux/reducers/misc";
 import { getSocket } from "../socket";
-import {
-  removeNewMessageAlert,
-  setNewMessageAlert,
-} from "../redux/reducers/chat";
 
 const Chat = ({ chatId }) => {
   const containerRef = useRef(null);
@@ -37,7 +37,7 @@ const Chat = ({ chatId }) => {
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
   const oldMessagesChunk = useGetMessagesQuery({ chatId, page: page });
 
-  console.log(oldMessagesChunk, "oldMessagesChunk");
+  // console.log(oldMessagesChunk, "oldMessagesChunk");
 
   const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
     containerRef,
@@ -49,29 +49,42 @@ const Chat = ({ chatId }) => {
 
   console.log(oldMessages, "oldMessages");
 
-  const newMessageHandler = useCallback((data) => {
-    if (data.chatId !== chatId) return;
-    setMessages((prev) => [...prev, data.message]);
-  }, []);
+  const newMessageHandler = useCallback(
+    (data) => {
+      if (data.chatId !== chatId) return;
+      setMessages((prev) => [...prev, data.message]);
+    },
+    [chatId]
+  );
 
-  // const newMessageAlertHandler = useCallback(
-  //   (data) => {
-  //     if (data.chatId === chatId) return;
-  //     disptach(setNewMessageAlert(data));
-  //   },
-  //   [chatId]
-  // );
+  useEffect(() => {
+    disptach(removeNewMessagesAlert(chatId));
+    return () => {
+      setMessage("");
+      setMessages([]);
+      setOldMessages([]);
+      setPage(1);
+    };
+  }, [chatId]);
+
+  const newMessageAlertHandler = useCallback((data) => {
+    disptach(setNewMessagesAlert(data));
+  });
+
+  console.log(messages, "messages");
 
   const eventHandler = { [NEW_MESSAGE]: newMessageHandler };
 
   useSocketEvents(socket, eventHandler);
 
   const errors = [
-    { isError: chatDetails.isError, error: chatDetails.error },
     { isError: oldMessagesChunk.isError, error: oldMessagesChunk.error },
+    { isError: chatDetails.isError, error: chatDetails.error },
   ];
 
   const allMessages = [...oldMessages, ...messages];
+
+  console.log(allMessages, "allMessages");
 
   const handleFileOpen = (e) => {
     disptach(setIsFileMenu(true));
@@ -94,16 +107,6 @@ const Chat = ({ chatId }) => {
     setMessage("");
   };
 
-  useEffect(() => {
-    disptach(removeNewMessageAlert(chatId));
-    return () => {
-      setMessage("");
-      setMessages([]);
-      setOldMessages([]);
-      setPage(1);
-    };
-  }, [chatId]);
-
   return chatDetails.isLoading ? (
     <Skeleton />
   ) : (
@@ -120,8 +123,8 @@ const Chat = ({ chatId }) => {
           overflowX: "hidden",
         }}
       >
-        {allMessages.map((i) => (
-          <MessageComponent key={i._id} message={i} user={user} />
+        {allMessages?.map((i) => (
+          <MessageComponent key={i?._id} message={i} user={user} />
         ))}
       </Stack>
       <form

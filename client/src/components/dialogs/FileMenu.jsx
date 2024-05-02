@@ -34,7 +34,7 @@ const FileMenu = ({ anchorE1, chatId }) => {
   const fileChangeHandler = async (e, key) => {
     const files = Array.from(e.target.files);
 
-    if (files.length <= 0) return;
+    if (files.length === 0) return;
     if (files.length > 5)
       return toast.alert(`You can only upload 5 ${key} at a time`);
 
@@ -45,8 +45,6 @@ const FileMenu = ({ anchorE1, chatId }) => {
     closeFileMenuHandler();
 
     try {
-      ///fetching here
-
       const myForm = new FormData();
 
       myForm.append("chatId", chatId);
