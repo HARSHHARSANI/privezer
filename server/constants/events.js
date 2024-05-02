@@ -14,3 +14,6 @@ export const EDIT_MESSAGE = "EDIT_MESSAGE";
 export const NEW_CHAT = "NEW_CHAT";
 export const NEW_USER = "NEW_USER";
 export const NEW_REQUEST = "NEW_REQUEST";
+
+export const START_TYPING = "START_TYPING";
+export const STOP_TYPING = "STOP_TYPING";

@@ -29,7 +29,7 @@ const AppLayout = () => (WrappedComponent) => {
 
     // console.log("socket.id", socket.id);
 
-    console.log(newMessagesAlert, "newMessageAlert");
+    // console.log(newMessagesAlert, "newMessageAlert");
 
     const dispatch = useDispatch();
 
@@ -39,7 +39,7 @@ const AppLayout = () => (WrappedComponent) => {
 
     const NewMessagesAlertHandler = useCallback(
       (data) => {
-        console.log("data", data, chatId, "chatId");
+        // console.log("data", data, chatId, "chatId");
         if (data.chatId === chatId) return;
         dispatch(setNewMessagesAlert(data));
       },

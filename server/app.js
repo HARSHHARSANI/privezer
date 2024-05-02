@@ -9,7 +9,12 @@ import adminRoutes from "./routes/adminRoutes.js";
 import colors from "colors";
 import { Server } from "socket.io";
 import { createServer } from "http";
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import {
+  NEW_MESSAGE,
+  NEW_MESSAGE_ALERT,
+  START_TYPING,
+  STOP_TYPING,
+} from "./constants/events.js";
 import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
 import messageModel from "./models/messageModel.js";
@@ -116,6 +121,31 @@ io.on("connection", (socket) => {
     } catch (error) {
       console.log(error);
     }
+  });
+
+  socket.on(START_TYPING, ({ chatId, members }) => {
+    const membersSocket = getSockets(members);
+    console.log("START_TYPING", chatId, members);
+
+    socket.to(membersSocket).emit(START_TYPING, {
+      chatId,
+      user: {
+        _id: user._id,
+        name: user.name,
+      },
+    });
+  });
+
+  socket.on(STOP_TYPING, ({ chatId, members }) => {
+    const membersSocket = getSockets(members);
+    console.log("STOP_TYPING", chatId, members);
+    socket.to(membersSocket).emit(STOP_TYPING, {
+      chatId,
+      user: {
+        _id: user._id,
+        name: user.name,
+      },
+    });
   });
 
   socket.on("disconnect", () => {
