@@ -39,6 +39,7 @@ const AppLayout = () => (WrappedComponent) => {
 
     const NewMessagesAlertHandler = useCallback(
       (data) => {
+        console.log("data", data, chatId, "chatId");
         if (data.chatId === chatId) return;
         dispatch(setNewMessagesAlert(data));
       },
@@ -58,13 +59,6 @@ const AppLayout = () => (WrappedComponent) => {
 
     useErrors([{ isError, error }]);
 
-    useEffect(() => {
-      getOrSaveFromStorage({
-        key: NEW_MESSAGE_ALERT,
-        value: newMessagesAlert,
-      });
-    }, [newMessagesAlert]);
-
     const handleDeleteChat = (e, _id, GroupChat) => {
       e.preventDefault();
       console.log("Delete Chat", _id, GroupChat);
@@ -73,6 +67,13 @@ const AppLayout = () => (WrappedComponent) => {
     const handleMobileClose = () => {
       dispatch(setIsMobile(false));
     };
+
+    useEffect(() => {
+      getOrSaveFromStorage({
+        key: NEW_MESSAGE_ALERT,
+        value: newMessagesAlert,
+      });
+    }, [newMessagesAlert]);
 
     return (
       <>

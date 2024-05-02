@@ -14,10 +14,7 @@ import AppLayout from "../components/layout/AppLayout";
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/StyledComponent";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
-import {
-  removeNewMessagesAlert,
-  setNewMessagesAlert,
-} from "../redux/reducers/chat";
+import { removeNewMessagesAlert } from "../redux/reducers/chat";
 import { setIsFileMenu } from "../redux/reducers/misc";
 import { getSocket } from "../socket";
 
@@ -66,10 +63,6 @@ const Chat = ({ chatId }) => {
       setPage(1);
     };
   }, [chatId]);
-
-  const newMessageAlertHandler = useCallback((data) => {
-    disptach(setNewMessagesAlert(data));
-  });
 
   console.log(messages, "messages");
 

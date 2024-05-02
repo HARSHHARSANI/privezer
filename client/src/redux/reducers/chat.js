@@ -1,10 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getOrSaveFromStorage } from "../../lib/features";
+import { NEW_MESSAGE_ALERT } from "../../components/constants/events";
 
 const chatSlice = createSlice({
   name: "chat",
   initialState: {
     notificationCount: 0,
-    newMessagesAlert: [
+    newMessagesAlert: getOrSaveFromStorage({
+      key: NEW_MESSAGE_ALERT,
+      get: true,
+    }) || [
       {
         chatId: "",
         count: 0,
