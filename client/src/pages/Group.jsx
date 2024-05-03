@@ -1,30 +1,27 @@
-import React, { Suspense, lazy, memo, useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
-import { backGround, orange } from "../components/constants/color";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
   Done as DoneIcon,
   Edit as EditIcon,
   KeyboardBackspace as KeyboardBackspaceIcon,
   Menu as MenuIcons,
-  Delete as DeleteIcon,
-  Add as AddIcon,
 } from "@mui/icons-material";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  Backdrop,
-  Button,
-  ButtonGroup,
-  Drawer,
-  TextField,
-} from "@mui/material";
+import { Backdrop, Button, Drawer, TextField } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { Link } from "../components/styles/StyledComponent";
+import React, { Suspense, lazy, memo, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { SampleUsers } from "../components/constants/SampleData";
+import { backGround, orange } from "../components/constants/color";
+import { useErrors } from "../components/hooks/hook";
+import { LayoutLoaders } from "../components/layout/Loaders";
 import AvatarCard from "../components/shared/AvatarCard";
-import { SampleUsers, Samplechats } from "../components/constants/SampleData";
 import UserItem from "../components/shared/UserItem";
+import { Link } from "../components/styles/StyledComponent";
+import { useGetMyGroupsQuery } from "../redux/api/api";
 
 const ConfirmDeleteDialog = lazy(() =>
   import("../components/dialogs/ConfirmDeleteDialog")
@@ -39,11 +36,21 @@ const Group = () => {
 
   const chatId = useSearchParams()[0].get("group");
 
+  const myGroups = useGetMyGroupsQuery("");
+
+  const selectedGroup = myGroups?.data?.groups?.find(
+    (group) => group._id === chatId
+  );
+
+  console.log(myGroups, "myGroups.data");
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupNameUpdated, setGroupNameUpdated] = useState("");
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
+
+  useErrors([{ isError: myGroups.isError, error: myGroups.error }]);
 
   const navigateBack = () => {
     navigate("/");
@@ -88,8 +95,12 @@ const Group = () => {
 
   useEffect(() => {
     if (chatId) {
-      setGroupName(`Group Name ${chatId}`);
-      setGroupNameUpdated(`Group Name ${chatId}`);
+      const groupName = myGroups?.data?.groups?.find(
+        (group) => group._id === chatId
+      );
+
+      setGroupName(`${groupName?.name} `);
+      setGroupNameUpdated(`${groupName?.name} `);
     }
     return () => {
       setGroupName("");
@@ -200,7 +211,9 @@ const Group = () => {
     </>
   );
 
-  return (
+  return myGroups.isLoading ? (
+    <LayoutLoaders />
+  ) : (
     <>
       <Grid container spacing={0} height={"100vh"}>
         <Grid
@@ -215,7 +228,7 @@ const Group = () => {
           height={"100vh"}
           bgcolor={backGround}
         >
-          <GroupsList myGroups={Samplechats} chatId={chatId} />
+          <GroupsList myGroups={myGroups?.data?.groups} chatId={chatId} />
         </Grid>
         <Grid
           item
@@ -249,19 +262,22 @@ const Group = () => {
                 boxSizing={"border-box"}
               >
                 {/* Members */}
-                {SampleUsers.map((user) => (
-                  <UserItem
-                    user={user}
-                    key={user._id}
-                    isAdded
-                    styling={{
-                      boxShadow: "0 0 0.5rem 0 rgba(0,0,0,0.2)",
-                      padding: "1rem 2rem",
-                      borderRadius: "2rem",
-                    }}
-                    handler={removeMemberHandler}
-                  />
-                ))}
+                {selectedGroup.members.map((user) => {
+                  console.log(selectedGroup.members, "selectedGroup.members");
+                  return (
+                    <UserItem
+                      user={user}
+                      key={user._id}
+                      isAdded
+                      styling={{
+                        boxShadow: "0 0 0.5rem 0 rgba(0,0,0,0.2)",
+                        padding: "1rem 2rem",
+                        borderRadius: "2rem",
+                      }}
+                      handler={removeMemberHandler}
+                    />
+                  );
+                })}
               </Stack>
 
               {ButtonGroupComponent}
@@ -297,7 +313,7 @@ const Group = () => {
             },
           }}
         >
-          <GroupsList myGroups={Samplechats} chatId={chatId} w="80vw" />
+          <GroupsList myGroups={myGroups.data} chatId={chatId} w="80vw" />
         </Drawer>
       </Grid>
     </>
@@ -305,6 +321,8 @@ const Group = () => {
 };
 
 const GroupsList = ({ w = "100%", myGroups = [], chatId }) => {
+  // console.log(myGroups, "myGroups in GroupsList");
+
   return (
     <Stack
       w={w}
@@ -326,14 +344,18 @@ const GroupsList = ({ w = "100%", myGroups = [], chatId }) => {
   );
 };
 
-const GroupListItems = memo(({ group, chatId }) => {
+const GroupListItems = memo(({ group = [], chatId }) => {
+  console.log(group, "group in GroupListItems");
+
   const { name, _id, members = [], avatar } = group;
+
   return (
     <Link
       to={`?group=${_id}`}
       onClick={(e) => {
         if (chatId === _id) e.preventDefault();
       }}
+      key={_id}
     >
       <Stack
         direction={"row"}

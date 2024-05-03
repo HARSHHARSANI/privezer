@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { userNotExist } from "../../redux/reducers/auth";
 import {
   setIsMobile,
+  setIsNewGroup,
   setIsNotification,
   setIsSearch,
 } from "../../redux/reducers/misc";
@@ -35,9 +36,9 @@ const GroupDialog = lazy(() => import("../specific/NewGroups"));
 const NotificationDialog = lazy(() => import("../specific/Notification"));
 
 const Header = () => {
-  const [isGroup, setIsGroup] = useState(false);
-
-  const { isSearch, isNotification } = useSelector((state) => state.misc);
+  const { isSearch, isNotification, isNewGroup } = useSelector(
+    (state) => state.misc
+  );
   const { notificationCount } = useSelector((state) => state.chat);
 
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const Header = () => {
   const openSearchDialog = () => dispatch(setIsSearch(true));
 
   const openNewGroup = () => {
-    setIsGroup(!isGroup);
+    dispatch(setIsNewGroup(true));
   };
 
   const openNotification = () => {
@@ -148,7 +149,7 @@ const Header = () => {
         </Suspense>
       )}
 
-      {isGroup && (
+      {isNewGroup && (
         <Suspense fallback={<Backdrop open />}>
           <GroupDialog />
         </Suspense>

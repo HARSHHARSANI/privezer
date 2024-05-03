@@ -30,7 +30,7 @@ import {
 
 const router = express.Router();
 
-router.get(
+router.post(
   "/new",
   isAuthenticated,
   groupChatValidators(),

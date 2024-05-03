@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { grayColor, secondaryColor } from "../components/constants/color";
 import {
+  ALERT,
   NEW_MESSAGE,
   START_TYPING,
   STOP_TYPING,
@@ -82,6 +83,23 @@ const Chat = ({ chatId }) => {
     [chatId]
   );
 
+  const AlertListener = useCallback(
+    (content) => {
+      const messageForAlert = {
+        content,
+        sender: {
+          _id: "asdasdasd", // "asdasdasd
+          name: "Admin",
+        },
+        chat: chatId,
+        createdAt: new Date().toISOString(),
+      };
+
+      setMessages((prev) => [...prev, messageForAlert]);
+    },
+    [chatId]
+  );
+
   useEffect(() => {
     disptach(removeNewMessagesAlert(chatId));
     return () => {
@@ -100,6 +118,7 @@ const Chat = ({ chatId }) => {
   // console.log(messages, "messages");
 
   const eventHandler = {
+    [ALERT]: AlertListener,
     [NEW_MESSAGE]: newMessageListener,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener,

@@ -27,6 +27,8 @@ export const newGroupChatController = TryCatch(async (req, res, next) => {
   const { name, members } = req.body;
   //console.log("name", name);
   //console.log("members", members);
+  console.log("name", name);
+  console.log(members, "members");
 
   if (members.length < 2) {
     return next(
@@ -87,20 +89,23 @@ export const getMyChatsController = TryCatch(async (req, res, next) => {
 export const getMyGroupsController = TryCatch(async (req, res, next) => {
   const chats = await chatModel
     .find({ members: req.user, groupChat: true, creator: req.user })
-    .populate("members", "name username avatar");
+    .populate({
+      path: "members",
+      select: "name username avatar",
+    });
 
   const groups = chats.map(({ _id, name, members, groupChat }) => {
     return {
       _id,
       name,
       groupChat,
+      members: members.map(({ _id, name, username, avatar }) => ({
+        _id,
+        name,
+        username,
+        avatar: avatar.url,
+      })),
       avatar: members.slice(0, 3).map(({ avatar }) => avatar.url),
-      members: members.reduce((prev, curr) => {
-        if (curr._id.toString() !== req.user.toString()) {
-          prev.push(curr._id);
-        }
-        return prev;
-      }, []),
     };
   });
 

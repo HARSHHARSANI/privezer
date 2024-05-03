@@ -88,6 +88,38 @@ const api = createApi({
         credentials: "include",
       }),
     }),
+
+    getMyGroups: builder.query({
+      query: () => ({
+        url: `chats/getmygroups`,
+        credentials: "include",
+      }),
+      providesTags: ["Chat"],
+    }),
+
+    availableFriends: builder.query({
+      query: (chatId) => {
+        let url = `users/friends`;
+        if (chatId) url += `?chatId=${chatId}`;
+
+        return {
+          url,
+          credentials: "include",
+        };
+      },
+      providesTags: ["User"],
+    }),
+
+    createNewGroup: builder.mutation({
+      query: ({ name, members }) => ({
+        url: `chats/new`,
+        method: "POST",
+        body: { name, members },
+        credentials: "include",
+      }),
+      invalidatesTags: ["Chat"],
+      keepUnusedDataFor: 0,
+    }),
   }),
 });
 
@@ -102,4 +134,7 @@ export const {
   useChatDetailsQuery,
   useGetMessagesQuery,
   useSendAttachmentsMutation,
+  useGetMyGroupsQuery,
+  useAvailableFriendsQuery,
+  useCreateNewGroupMutation,
 } = api;
