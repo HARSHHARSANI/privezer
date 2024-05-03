@@ -101,7 +101,6 @@ const api = createApi({
       query: (chatId) => {
         let url = `users/friends`;
         if (chatId) url += `?chatId=${chatId}`;
-
         return {
           url,
           credentials: "include",
@@ -116,6 +115,49 @@ const api = createApi({
         method: "POST",
         body: { name, members },
         credentials: "include",
+      }),
+      invalidatesTags: ["Chat"],
+      keepUnusedDataFor: 0,
+    }),
+
+    deleteGroup: builder.mutation({
+      query: (id) => ({
+        url: `chats/chat/${id}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Chat"],
+      keepUnusedDataFor: 0,
+    }),
+
+    renameGroup: builder.mutation({
+      query: ({ id, name }) => ({
+        url: `chats/chat/${id}`,
+        method: "PUT",
+        body: { name },
+        credentials: "include",
+      }),
+      invalidatesTags: ["Chat"],
+      keepUnusedDataFor: 0,
+    }),
+
+    removeMemberFromGroup: builder.mutation({
+      query: ({ chatId, userId }) => ({
+        url: `chats/delete`,
+        method: "DELETE",
+        credentials: "include",
+        body: { chatId, userId },
+      }),
+      invalidatesTags: ["Chat"],
+      keepUnusedDataFor: 0,
+    }),
+
+    addMemberToGroup: builder.mutation({
+      query: ({ chatId, members }) => ({
+        url: `chats/addmembers`,
+        method: "PUT",
+        credentials: "include", // Send cookies
+        body: { chatId, members },
       }),
       invalidatesTags: ["Chat"],
       keepUnusedDataFor: 0,
@@ -137,4 +179,8 @@ export const {
   useGetMyGroupsQuery,
   useAvailableFriendsQuery,
   useCreateNewGroupMutation,
+  useDeleteGroupMutation,
+  useRenameGroupMutation,
+  useRemoveMemberFromGroupMutation,
+  useAddMemberToGroupMutation,
 } = api;

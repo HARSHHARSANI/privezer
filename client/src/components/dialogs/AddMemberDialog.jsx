@@ -1,10 +1,18 @@
 import { Button, Dialog, DialogTitle, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { SampleUsers } from "../constants/SampleData";
+import { useDispatch, useSelector } from "react-redux";
+import { useAvailableFriendsQuery } from "../../redux/api/api";
+import { setIsAddMember } from "../../redux/reducers/misc";
 import UserItem from "../shared/UserItem";
 
 const AddMemberDialog = ({ addmember, isLoadingAddMember, chatId }) => {
-  const [members, setMembers] = useState(SampleUsers);
+  const dispatch = useDispatch();
+
+  const availableFriends = useAvailableFriendsQuery(chatId);
+
+  // console.log(availableFriends, "availableFriends");
+
+  const { isAddMember } = useSelector((state) => state.misc);
 
   const [selectedMembers, setSelectedMembers] = useState([]);
 
@@ -17,24 +25,29 @@ const AddMemberDialog = ({ addmember, isLoadingAddMember, chatId }) => {
   };
 
   const AddMemberSubmitHandler = () => {
+    addmember("Adding Selected Members ...", {
+      chatId,
+      members: selectedMembers,
+    });
     console.log("AddMemberSubmitHandler");
     closeHandler();
   };
 
   const closeHandler = () => {
+    dispatch(setIsAddMember(false));
     console.log("closeHandler");
     setMembers([]);
     setSelectedMembers([]);
   };
 
   return (
-    <Dialog open onClose={closeHandler}>
+    <Dialog open={isAddMember} onClose={closeHandler}>
       <Stack p={"2rem"} width={"20rem"} spacing={"2rem"}>
         <DialogTitle textAlign={"center"}>Add Member</DialogTitle>
 
         <Stack spacing={"1rem"}>
-          {members.length > 0 ? (
-            members.map((user) => (
+          {availableFriends?.data?.allAvailableFriends?.length > 0 ? (
+            availableFriends?.data?.allAvailableFriends?.map((user) => (
               <UserItem
                 user={user}
                 key={user.id}
@@ -54,7 +67,12 @@ const AddMemberDialog = ({ addmember, isLoadingAddMember, chatId }) => {
           alignItems={"center"}
         >
           {" "}
-          <Button color="error" variant="outlined" onClick={closeHandler}>
+          <Button
+            color="error"
+            variant="outlined"
+            onClick={closeHandler}
+            disabled={isLoadingAddMember}
+          >
             Cancel
           </Button>
           <Button
