@@ -160,7 +160,25 @@ const api = createApi({
         body: { chatId, members },
       }),
       invalidatesTags: ["Chat"],
-      keepUnusedDataFor: 0,
+    }),
+
+    leaveGroup: builder.mutation({
+      query: (id) => ({
+        url: `chats/leave/${id}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Chat"],
+    }),
+
+    makeGroupAdmin: builder.mutation({
+      query: ({ chatId, userId }) => ({
+        url: `chats/makeGroupAdmin`,
+        method: "PUT",
+        credentials: "include",
+        body: { userId, chatId },
+      }),
+      invalidatesTags: ["Chat"],
     }),
   }),
 });
@@ -183,4 +201,6 @@ export const {
   useRenameGroupMutation,
   useRemoveMemberFromGroupMutation,
   useAddMemberToGroupMutation,
+  useLeaveGroupMutation,
+  useMakeGroupAdminMutation,
 } = api;

@@ -8,6 +8,7 @@ import {
   getMyChatsController,
   getMyGroupsController,
   leaveGroupController,
+  makeGroupAdminController,
   newGroupChatController,
   removeMemberController,
   renameGroupController,
@@ -22,6 +23,7 @@ import {
   getMessageValidators,
   groupChatValidators,
   leaveGroupValidators,
+  makeGroupAdminValidators,
   removeMemberValidators,
   renameGroupValidators,
   sendAttachmentValidators,
@@ -104,6 +106,14 @@ router.put(
   renameGroupValidators(),
   validateHandler,
   renameGroupController
+);
+
+router.put(
+  "/makeGroupAdmin",
+  isAuthenticated,
+  makeGroupAdminValidators(),
+  validateHandler,
+  makeGroupAdminController
 );
 
 export default router;

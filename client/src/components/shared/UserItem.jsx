@@ -1,7 +1,15 @@
-import { Add as AddIcon, Remove as RemoveIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  AdminPanelSettingsTwoTone as AdminPanelSettingsTwoToneIcon,
+  Remove as RemoveIcon,
+} from "@mui/icons-material";
 import { Avatar, IconButton, ListItem, Stack, Typography } from "@mui/material";
 import React, { memo } from "react";
 import { transformImage } from "../../lib/features";
+import { userAsyncMutation } from "../hooks/hook";
+import { useMakeGroupAdminMutation } from "../../redux/api/api";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const UserItem = ({
   user,
@@ -11,6 +19,22 @@ const UserItem = ({
   styling = {},
 }) => {
   const { name, _id, avatar } = user;
+
+  // const navigate = useNavigate();
+
+  // const chatId = useSearchParams()[0].get("group");
+  // // const { selectedDeleteChat } = useSelector((state) => state.misc);
+
+  // console.log(chatId);
+
+  // const [makeAdmin, isloadingMakingAdmin, makingAdminData] = userAsyncMutation(
+  //   useMakeGroupAdminMutation
+  // );
+
+  // const makeAdminHandler = async (_id) => {
+  //   makeAdmin("Making Admin ...", { chatId, userId: _id });
+  //   navigate("/");
+  // };
 
   return (
     <ListItem>
@@ -50,6 +74,21 @@ const UserItem = ({
         >
           {isAdded ? <RemoveIcon /> : <AddIcon />}
         </IconButton>
+
+        {/* <IconButton
+          onClick={() => makeAdminHandler(_id)}
+          disabled={handlerIsLoading}
+          size="small"
+          sx={{
+            bgcolor: isAdded ? "error.main" : "primary.main",
+            color: "white",
+            "&:hover": {
+              bgcolor: isAdded ? "error.main" : "primary.main",
+            },
+          }}
+        >
+          {isAdded ? <AdminPanelSettingsTwoToneIcon /> : null}
+        </IconButton> */}
       </Stack>
     </ListItem>
   );

@@ -501,3 +501,45 @@ export const getMessagesController = TryCatch(async (req, res, next) => {
     totalPages,
   });
 });
+
+export const makeGroupAdminController = TryCatch(async (req, res, next) => {
+  const { userId, chatId } = req.body;
+
+  console.log(userId, chatId, "userId, chatId");
+
+  const [chat, user] = await Promise.all([
+    chatModel.findById(chatId),
+    userModel.findById(userId, "name"),
+  ]);
+
+  if (!chat) {
+    return next(new ErrorHandler("Chat not found", 404));
+  }
+
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  if (!chat.groupChat) {
+    return next(new ErrorHandler("This is not a group chat", 400));
+  }
+
+  if (chat.creator.toString() !== req.user.toString()) {
+    return next(new ErrorHandler("You are not the creator of this group", 400));
+  }
+
+  if (!chat.members.includes(userId)) {
+    return next(new ErrorHandler("User is not a member of this group", 400));
+  }
+
+  chat.creator = userId;
+
+  await chat.save();
+
+  emitEvents(req, ALERT, chat.members, `${user.name} is now the group admin`);
+
+  return res.status(200).json({
+    success: true,
+    message: "Group admin updated successfully",
+  });
+});

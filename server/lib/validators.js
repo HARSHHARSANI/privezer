@@ -91,3 +91,8 @@ export const acceptRequestValidators = () => [
 export const adminLoginValidators = () => [
   body("secretKey", "please Enter Secret Key").notEmpty(),
 ];
+
+export const makeGroupAdminValidators = () => [
+  body("userId", "Please Enter UserId").notEmpty(),
+  body("chatId", "Please Enter ChatId").notEmpty(),
+];
