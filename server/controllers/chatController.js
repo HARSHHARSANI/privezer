@@ -1,9 +1,5 @@
-import {
-  ALERT,
-  NEW_ATTACHMENT,
-  NEW_MESSAGE,
-  REFRESH_CHATS,
-} from "../constants/events.js";
+import { v2 as cloudinary } from "cloudinary";
+import { ALERT, NEW_MESSAGE, REFRESH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 import { TryCatch } from "../middlewares/error.js";
 import chatModel from "../models/chatModel.js";
@@ -15,7 +11,6 @@ import {
   uploadFiles,
 } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
-import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
   cloud_name: "drtsskg28",
@@ -210,6 +205,8 @@ export const removeMemberController = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("Group must have at least 3 members", 400));
   }
 
+  const allMembers = chat.members.map((member) => member.toString());
+
   chat.members = chat.members.filter(
     (member) => member.toString() !== userId.toString()
   );
@@ -223,7 +220,7 @@ export const removeMemberController = TryCatch(async (req, res, next) => {
     `${userThatWillBeRemoved.name} has been removed from the group`
   );
 
-  emitEvents(req, REFRESH_CHATS, chat.members);
+  emitEvents(req, REFRESH_CHATS, allMembers);
 
   return res.status(200).json({
     success: true,
@@ -473,10 +470,18 @@ export const getMessagesController = TryCatch(async (req, res, next) => {
   const { id } = req.params;
   const { page = 1 } = req.query;
 
-  // console.log("page", page);
-
   const resultPerPage = 20;
   const skip = (page - 1) * resultPerPage;
+
+  const chat = await chatModel.findById(id);
+
+  if (!chat) {
+    return next(new ErrorHandler("Chat not found", 404));
+  }
+
+  if (!chat.members.includes(req.user.toString())) {
+    return next(new ErrorHandler("You are not a member of this chat", 400));
+  }
 
   const [message, totalMessageCount] = await Promise.all([
     messageModel
@@ -487,8 +492,7 @@ export const getMessagesController = TryCatch(async (req, res, next) => {
       .skip(skip),
     messageModel.countDocuments({ chat: id }),
   ]);
-  // console.log(message.length);
-  // console.log(totalMessageCount);
+
   const totalPages = Math.ceil(totalMessageCount / resultPerPage);
 
   return res.status(200).json({

@@ -6,15 +6,21 @@ import {
   KeyboardBackspace as KeyboardBackspaceIcon,
   Menu as MenuIcons,
 } from "@mui/icons-material";
-import { Backdrop, Button, Drawer, TextField } from "@mui/material";
+import {
+  Backdrop,
+  Button,
+  CircularProgress,
+  Drawer,
+  TextField,
+} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import React, { Suspense, lazy, memo, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { SampleUsers } from "../components/constants/SampleData";
 import { backGround, orange } from "../components/constants/color";
 import { useErrors, userAsyncMutation } from "../components/hooks/hook";
 import { LayoutLoaders } from "../components/layout/Loaders";
@@ -28,8 +34,7 @@ import {
   useRemoveMemberFromGroupMutation,
   useRenameGroupMutation,
 } from "../redux/api/api";
-import { useDispatch, useSelector } from "react-redux";
-import { setIsAddMember } from "../redux/reducers/misc";
+import { setIsAddMember, setIsDeleteMenu } from "../redux/reducers/misc";
 
 const ConfirmDeleteDialog = lazy(() =>
   import("../components/dialogs/ConfirmDeleteDialog")
@@ -43,12 +48,14 @@ const Group = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { isAddMember } = useSelector((state) => state.misc);
+  const { isAddMember, isDeleteMenu } = useSelector((state) => state.misc);
 
   const chatId = useSearchParams()[0].get("group");
 
   const myGroups = useGetMyGroupsQuery("");
-  const deleteGroup = useDeleteGroupMutation();
+  const [deleteGroup, isloadingDeleteGroup] = userAsyncMutation(
+    useDeleteGroupMutation
+  );
   const [renameGroup, isloadingGroupName] = userAsyncMutation(
     useRenameGroupMutation
   );
@@ -63,13 +70,10 @@ const Group = () => {
     (group) => group._id === chatId
   );
 
-  // console.log(myGroups, "myGroups.data");
-
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupNameUpdated, setGroupNameUpdated] = useState("");
-  const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
 
   useErrors([
     {
@@ -102,8 +106,13 @@ const Group = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const deleteHandler = () => {
-    console.log("deleteHandler");
+  const deleteHandler = (chatId) => {
+    deleteGroup("Deleting Group...", chatId);
+    console.log("deleteHandler", chatId);
+    dispatch(setIsDeleteMenu(false));
+    setGroupName("");
+    setGroupNameUpdated("");
+    navigateBack();
   };
 
   const handleMobileClose = () => {
@@ -120,12 +129,12 @@ const Group = () => {
   };
 
   const openConfirmDeleteHandler = () => {
-    setConfirmDeleteDialog(true);
+    dispatch(setIsDeleteMenu(true));
     console.log("confirmDeleteHandler");
   };
 
   const closeConfirmDeleteHandler = () => {
-    setConfirmDeleteDialog(false);
+    dispatch(setIsDeleteMenu(false));
     console.log("confirmDeleteHandler");
   };
 
@@ -204,6 +213,7 @@ const Group = () => {
           variant="outlined"
           startIcon={<DeleteIcon />}
           onClick={openConfirmDeleteHandler}
+          disabled={isloadingDeleteGroup}
         >
           Delete Group
         </Button>
@@ -212,7 +222,7 @@ const Group = () => {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={openAddMemberHandler}
-          disabled={isloadingAddMember}
+          disabled={isloadingAddMember || isloadingDeleteGroup}
         >
           Add Member
         </Button>
@@ -296,7 +306,9 @@ const Group = () => {
 
           {groupName && (
             <>
-              {GroupName}
+              <Typography>
+                {GroupName ? groupName : "Select a Group"}
+              </Typography>
 
               <Typography margin={"2rem"} marginTop={"2rem"} variant="h5">
                 Members
@@ -312,21 +324,25 @@ const Group = () => {
                 boxSizing={"border-box"}
               >
                 {/* Members */}
-                {selectedGroup.members.map((user) => {
-                  return (
-                    <UserItem
-                      user={user}
-                      key={user._id}
-                      isAdded
-                      styling={{
-                        boxShadow: "0 0 0.5rem 0 rgba(0,0,0,0.2)",
-                        padding: "1rem 2rem",
-                        borderRadius: "2rem",
-                      }}
-                      handler={removeMemberHandler}
-                    />
-                  );
-                })}
+                {isloadingRemoveMember ? (
+                  <CircularProgress />
+                ) : (
+                  selectedGroup?.members?.map((user) => {
+                    return (
+                      <UserItem
+                        user={user}
+                        key={user._id}
+                        isAdded
+                        styling={{
+                          boxShadow: "0 0 0.5rem 0 rgba(0,0,0,0.2)",
+                          padding: "1rem 2rem",
+                          borderRadius: "2rem",
+                        }}
+                        handler={removeMemberHandler}
+                      />
+                    );
+                  })
+                )}
               </Stack>
 
               {ButtonGroupComponent}
@@ -344,13 +360,15 @@ const Group = () => {
           </Suspense>
         )}
 
-        {confirmDeleteDialog && (
+        {isDeleteMenu && (
           <>
             <Suspense fallback={<Backdrop open />}>
               <ConfirmDeleteDialog
-                open={confirmDeleteDialog}
+                open={isDeleteMenu}
                 handleClose={closeConfirmDeleteHandler}
                 deleteHandler={deleteHandler}
+                chatId={chatId}
+                isDeleteMenu={isDeleteMenu}
               />
             </Suspense>
           </>

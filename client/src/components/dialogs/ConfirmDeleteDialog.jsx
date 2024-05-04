@@ -8,9 +8,15 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-const ConfirmDeleteDialog = ({ open, handleClose, deleteHandler }) => {
+const ConfirmDeleteDialog = ({
+  open,
+  handleClose,
+  deleteHandler,
+  chatId,
+  isDeleteMenu,
+}) => {
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={isDeleteMenu} onClose={handleClose}>
       <DialogTitle>Confirm Delete</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -19,7 +25,7 @@ const ConfirmDeleteDialog = ({ open, handleClose, deleteHandler }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={deleteHandler} autoFocus color="error">
+        <Button onClick={(e) => deleteHandler(chatId)} autoFocus color="error">
           Delete
         </Button>
       </DialogActions>

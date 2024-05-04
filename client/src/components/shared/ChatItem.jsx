@@ -7,11 +7,12 @@ const ChatItem = ({
   avatar = [],
   name,
   _id,
-  GroupChat = false,
+  groupChat,
   sameSender,
   isOnline,
   newMessageAlert = [],
   index,
+  handleDeleteChat,
 }) => {
   return (
     <Link
@@ -19,7 +20,7 @@ const ChatItem = ({
         padding: "0",
       }}
       to={`/chat/${_id}`}
-      onContextMenu={(e) => handleDeleteChat(e, _id, GroupChat)}
+      onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}
     >
       <div
         style={{

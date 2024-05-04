@@ -84,7 +84,7 @@ const Header = () => {
             bgcolor: "red",
           }}
         >
-          <Toolbar sx={{ justifyContent: "flex-end" }}>
+          <Toolbar sx={{ justifyContent: "flex-end", position: "sticky" }}>
             <Typography
               variant="h6"
               sx={{
