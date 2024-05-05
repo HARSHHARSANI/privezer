@@ -36,8 +36,10 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://reliable-frangollo-715bc0.netlify.app",
-    withcreadentials: true,
+    origin: [
+      "https://reliable-frangollo-715bc0.netlify.app",
+      "https://effervescent-kataifi-87f2a0.netlify.app",
+    ],
     credentials: true,
   },
 });
@@ -56,7 +58,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://reliable-frangollo-715bc0.netlify.app",
+    origin: [
+      "https://reliable-frangollo-715bc0.netlify.app",
+      "https://effervescent-kataifi-87f2a0.netlify.app",
+    ],
     credentials: true,
   })
 );
