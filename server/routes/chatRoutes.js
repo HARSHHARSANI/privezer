@@ -108,12 +108,12 @@ router.put(
   renameGroupController
 );
 
-router.put(
-  "/makeGroupAdmin",
-  isAuthenticated,
-  makeGroupAdminValidators(),
-  validateHandler,
-  makeGroupAdminController
-);
+// router.put(
+//   "/makeGroupAdmin",
+//   isAuthenticated,
+//   makeGroupAdminValidators(),
+//   validateHandler,
+//   makeGroupAdminController
+// );
 
 export default router;

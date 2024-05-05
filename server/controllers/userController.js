@@ -180,6 +180,8 @@ export const sendRequestController = TryCatch(async (req, res, next) => {
 
   emitEvents(req, NEW_REQUEST, [id]);
 
+  emitEvents(req, REFRESH_CHATS, [req.user, id]);
+
   res.status(200).json({
     success: true,
     message: "Request sent successfully",
@@ -197,7 +199,7 @@ export const acceptRequestController = TryCatch(async (req, res, next) => {
     .populate("sender", "name")
     .populate("receiver", "name");
 
-  // console.log(request);
+  console.log(request);
 
   if (!request) {
     return next(new ErrorHandler("Request not found", 404));

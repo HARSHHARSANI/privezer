@@ -21,6 +21,7 @@ import { setIsSearch } from "../../redux/reducers/misc";
 import UserItem from "../shared/UserItem";
 import { toast } from "react-hot-toast";
 import { userAsyncMutation } from "../hooks/hook";
+import { motion } from "framer-motion";
 
 const Search = () => {
   const search = useInputValidation("");
@@ -68,51 +69,59 @@ const Search = () => {
   }, [search.value]);
 
   return (
-    <Dialog open={isSearch} onClose={handleSearchClose}>
-      <Stack p={"2rem"} direction={"column"} width={"25rem"}>
-        <DialogTitle textAlign={"center"}>Find People</DialogTitle>
-        <TextField
-          label=""
-          value={search.value}
-          onChange={search.changeHandler}
-          variant="outlined"
-          size="small"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        {loading ? (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: "2rem",
+    <div>
+      <Dialog open={isSearch} onClose={handleSearchClose}>
+        <Stack p={"2rem"} direction={"column"} width={"25rem"}>
+          <DialogTitle textAlign={"center"}>Find People</DialogTitle>
+          <TextField
+            label=""
+            value={search.value}
+            onChange={search.changeHandler}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
             }}
-          >
-            <CircularProgress />
-          </Box>
-        ) : (
-          <List>
-            {users.map((user) => (
-              <ListItem key={user._id}>
-                <UserItem
-                  user={user}
-                  key={user._id}
-                  handler={addFriendHandler}
-                  handlerIsLoading={isLoadingSendFriendRequest}
-                />
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </Stack>
-    </Dialog>
+          />
+
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: "2rem",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            <List>
+              <motion.div
+                initial={{ opacity: 0, y: "40%" }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                {users.map((user) => (
+                  <ListItem key={user._id}>
+                    <UserItem
+                      user={user}
+                      key={user._id}
+                      handler={addFriendHandler}
+                      handlerIsLoading={isLoadingSendFriendRequest}
+                    />
+                  </ListItem>
+                ))}
+              </motion.div>
+            </List>
+          )}
+        </Stack>
+      </Dialog>
+    </div>
   );
 };
 

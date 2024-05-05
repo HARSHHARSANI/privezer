@@ -10,8 +10,6 @@ const AddMemberDialog = ({ addmember, isLoadingAddMember, chatId }) => {
 
   const availableFriends = useAvailableFriendsQuery(chatId);
 
-  // console.log(availableFriends, "availableFriends");
-
   const { isAddMember } = useSelector((state) => state.misc);
 
   const [selectedMembers, setSelectedMembers] = useState([]);

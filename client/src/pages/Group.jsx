@@ -43,6 +43,7 @@ const ConfirmDeleteDialog = lazy(() =>
 const AddMemberDialog = lazy(() =>
   import("../components/dialogs/AddMemberDialog")
 );
+import { motion } from "framer-motion";
 
 const Group = () => {
   const navigate = useNavigate();
@@ -327,21 +328,27 @@ const Group = () => {
                 {isloadingRemoveMember ? (
                   <CircularProgress />
                 ) : (
-                  selectedGroup?.members?.map((user) => {
-                    return (
-                      <UserItem
-                        user={user}
-                        key={user._id}
-                        isAdded
-                        styling={{
-                          boxShadow: "0 0 0.5rem 0 rgba(0,0,0,0.2)",
-                          padding: "1rem 2rem",
-                          borderRadius: "2rem",
-                        }}
-                        handler={removeMemberHandler}
-                      />
-                    );
-                  })
+                  <motion.div
+                    initial={{ opacity: 0, y: "30" }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {selectedGroup?.members?.map((user) => {
+                      return (
+                        <UserItem
+                          user={user}
+                          key={user._id}
+                          isAdded
+                          styling={{
+                            boxShadow: "0 0 0.5rem 0 rgba(0,0,0,0.2)",
+                            padding: "1rem 2rem",
+                            borderRadius: "2rem",
+                          }}
+                          handler={removeMemberHandler}
+                        />
+                      );
+                    })}
+                  </motion.div>
                 )}
               </Stack>
 
@@ -407,9 +414,15 @@ const GroupsList = ({ w = "100%", myGroups = [], chatId }) => {
       }}
     >
       {myGroups.length > 0 ? (
-        myGroups.map((group) => (
-          <GroupListItems group={group} chatId={chatId} key={group._id} />
-        ))
+        <motion.div
+          initial={{ opacity: 0, y: "30" }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {myGroups.map((group) => (
+            <GroupListItems group={group} chatId={chatId} key={group._id} />
+          ))}
+        </motion.div>
       ) : (
         <Typography padding={"1rem"} textAlign={"center"}>
           No Group Found

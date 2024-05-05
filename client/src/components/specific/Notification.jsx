@@ -17,6 +17,7 @@ import {
 import { setIsNotification } from "../../redux/reducers/misc";
 import { useErrors } from "../hooks/hook";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 const Notification = () => {
   const disptach = useDispatch();
@@ -112,7 +113,11 @@ const Notification = () => {
         ) : (
           <>
             {data?.allRequests?.length > 0 ? (
-              <>
+              <motion.div
+                initial={{ opacity: 0, y: "40" }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
                 {data?.allRequests.map((notification) => (
                   <NotificationItem
                     key={notification._id}
@@ -121,7 +126,7 @@ const Notification = () => {
                     handler={friendRequestHandler}
                   />
                 ))}
-              </>
+              </motion.div>
             ) : (
               <Typography textAlign={"center"}>No Notifications</Typography>
             )}

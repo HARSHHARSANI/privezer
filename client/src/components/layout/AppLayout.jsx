@@ -19,12 +19,12 @@ import {
   NEW_REQUEST,
   REFRESH_CHATS,
 } from "../constants/events";
+import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 import { useErrors, useSocketEvents } from "../hooks/hook";
 import Title from "../shared/Title";
 import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
-import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {

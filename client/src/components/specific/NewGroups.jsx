@@ -18,6 +18,7 @@ import { setIsNewGroup } from "../../redux/reducers/misc";
 import { useErrors, userAsyncMutation } from "../hooks/hook";
 import UserItem from "../shared/UserItem";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 const NewGroups = () => {
   const [selectedMembers, setSelectedMembers] = useState([]);
@@ -103,14 +104,20 @@ const NewGroups = () => {
           {isLoading ? (
             <Skeleton />
           ) : (
-            data?.allFriends?.map((user) => (
-              <UserItem
-                user={user}
-                key={user._id}
-                handler={selectMemberHandler}
-                isAdded={selectedMembers.includes(user._id)}
-              />
-            ))
+            <motion.div
+              initial={{ opacity: 0, y: "40" }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {data?.allFriends?.map((user) => (
+                <UserItem
+                  user={user}
+                  key={user._id}
+                  handler={selectMemberHandler}
+                  isAdded={selectedMembers.includes(user._id)}
+                />
+              ))}
+            </motion.div>
           )}
         </Stack>
 
