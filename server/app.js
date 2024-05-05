@@ -36,14 +36,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      "http://localhost:3000",
-      "http://52.41.36.82",
-      "https://privezer-1.onrender.com",
-      "*",
-    ],
+    origin: "*",
     withcreadentials: true,
     credentials: true,
   },
@@ -63,14 +56,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      "http://localhost:3000",
-      "http://52.41.36.82",
-      "https://privezer-1.onrender.com",
-      "*",
-    ],
+    origin: "*",
     credentials: true,
   })
 );
