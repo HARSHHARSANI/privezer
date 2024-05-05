@@ -42,6 +42,7 @@ const io = new Server(server, {
       "http://localhost:3000",
       "http://52.41.36.82",
       "https://privezer-1.onrender.com",
+      "*",
     ],
     withcreadentials: true,
     credentials: true,
@@ -68,6 +69,7 @@ app.use(
       "http://localhost:3000",
       "http://52.41.36.82",
       "https://privezer-1.onrender.com",
+      "*",
     ],
     credentials: true,
   })
