@@ -8,7 +8,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { motion } from "framer-motion";
 import React, { memo } from "react";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import {
   useAcceptFriendRequestMutation,
@@ -16,17 +18,15 @@ import {
 } from "../../redux/api/api";
 import { setIsNotification } from "../../redux/reducers/misc";
 import { useErrors } from "../hooks/hook";
-import toast from "react-hot-toast";
-import { motion } from "framer-motion";
 
 const Notification = () => {
   const disptach = useDispatch();
 
   const { isNotification } = useSelector((state) => state.misc);
 
-  // console.log("isNotification", isNotification);
-
   const { isLoading, data, error, isError } = useGetNotificationsQuery();
+
+  console.log(data);
 
   const [acceptFriendRequest] = useAcceptFriendRequestMutation();
 
@@ -111,26 +111,24 @@ const Notification = () => {
         {isLoading ? (
           <Skeleton />
         ) : (
-          <>
+          <motion.div
+            initial={{ opacity: 0, y: "-100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             {data?.allRequests?.length > 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: "40" }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {data?.allRequests.map((notification) => (
-                  <NotificationItem
-                    key={notification._id}
-                    sender={notification.sender}
-                    _id={notification._id}
-                    handler={friendRequestHandler}
-                  />
-                ))}
-              </motion.div>
+              data?.allRequests.map((notification) => (
+                <NotificationItem
+                  key={notification._id}
+                  sender={notification.sender}
+                  _id={notification._id}
+                  handler={friendRequestHandler}
+                />
+              ))
             ) : (
               <Typography textAlign={"center"}>No Notifications</Typography>
             )}
-          </>
+          </motion.div>
         )}
       </Stack>
     </Dialog>

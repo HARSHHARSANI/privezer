@@ -20,7 +20,7 @@ import {
 import { setIsSearch } from "../../redux/reducers/misc";
 import UserItem from "../shared/UserItem";
 import { toast } from "react-hot-toast";
-import { userAsyncMutation } from "../hooks/hook";
+import { useAsyncMutation } from "../hooks/hook";
 import { motion } from "framer-motion";
 
 const Search = () => {
@@ -32,7 +32,7 @@ const Search = () => {
   const { isSearch } = useSelector((state) => state.misc);
 
   const [searchUser] = useLazySearchUserQuery();
-  const [sendFriendRequest, isLoadingSendFriendRequest] = userAsyncMutation(
+  const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(
     useSendFriendRequestMutation
   );
 

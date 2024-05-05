@@ -6,7 +6,7 @@ import {
 import { Avatar, IconButton, ListItem, Stack, Typography } from "@mui/material";
 import React, { memo } from "react";
 import { transformImage } from "../../lib/features";
-import { userAsyncMutation } from "../hooks/hook";
+import { useAsyncMutation } from "../hooks/hook";
 import { useMakeGroupAdminMutation } from "../../redux/api/api";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -27,7 +27,7 @@ const UserItem = ({
 
   // console.log(chatId);
 
-  // const [makeAdmin, isloadingMakingAdmin, makingAdminData] = userAsyncMutation(
+  // const [makeAdmin, isloadingMakingAdmin, makingAdminData] = useAsyncMutation(
   //   useMakeGroupAdminMutation
   // );
 

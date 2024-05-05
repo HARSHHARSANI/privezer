@@ -40,6 +40,7 @@ const io = new Server(server, {
       "http://localhost:5173",
       "http://localhost:4173",
       "http://localhost:3000",
+      "http://52.41.36.82",
     ],
     withcreadentials: true,
     credentials: true,
@@ -64,6 +65,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:4173",
       "http://localhost:3000",
+      "http://52.41.36.82",
     ],
     credentials: true,
   })

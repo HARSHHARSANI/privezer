@@ -40,7 +40,7 @@ const FileMenu = ({ anchorE1, chatId }) => {
 
     dispatch(setUploadingLoader(true));
 
-    const taostId = toast.loading("Uploading...");
+    const toastId = toast.loading("Uploading...");
 
     closeFileMenuHandler();
 
@@ -58,11 +58,11 @@ const FileMenu = ({ anchorE1, chatId }) => {
 
       if (res.data) {
         toast.success(`Uploaded ${key} successfully`, {
-          id: taostId,
+          id: toastId,
         });
       } else {
         toast.error(`Failed to upload ${key}`, {
-          id: taostId,
+          id: toastId,
         });
       }
     } catch (error) {

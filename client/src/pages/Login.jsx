@@ -73,7 +73,7 @@ const Login = () => {
   const handleLogin = async (values) => {
     try {
       setLoading(true);
-      setProgress(50); // Example progress update
+      setProgress(50);
       const { data } = await axios.post(
         `${server}/api/v1/users/login`,
         {
@@ -85,7 +85,8 @@ const Login = () => {
       // console.log(data);
       dispatch(userExist(data.user));
       setLoading(false);
-      toast.success(data.message);
+      const toastId = toast.loading("Logging in ...");
+      toast.success(data.message, { id: toastId });
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -114,10 +115,12 @@ const Login = () => {
           },
         }
       );
-      console.log(data);
-      dispatch(userExist(true));
+      // console.log(data.user);
+      dispatch(userExist(data.user));
       setLoading(false);
-      toast.success(data.message);
+      toast.success(data.message, {
+        icon: "🚀",
+      });
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -292,7 +295,6 @@ const Login = () => {
                   className="error-message"
                 />
 
-                {/* Conditional rendering based on loading state */}
                 {loading ? (
                   <CircularProgressWithLabel value={progress} />
                 ) : (

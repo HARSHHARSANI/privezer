@@ -15,7 +15,7 @@ const useErrors = (errors = []) => {
   }, [errors]);
 };
 
-const userAsyncMutation = (mutationHook) => {
+const useAsyncMutation = (mutationHook) => {
   const [data, setData] = useState(null);
   const [isloading, setIsloading] = useState(false);
 
@@ -67,4 +67,4 @@ const useSocketEvents = (socket, handlers) => {
   }, [socket, handlers]);
 };
 
-export { useErrors, userAsyncMutation, useSocketEvents };
+export { useErrors, useAsyncMutation, useSocketEvents };

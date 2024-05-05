@@ -15,7 +15,7 @@ import {
   useCreateNewGroupMutation,
 } from "../../redux/api/api";
 import { setIsNewGroup } from "../../redux/reducers/misc";
-import { useErrors, userAsyncMutation } from "../hooks/hook";
+import { useErrors, useAsyncMutation } from "../hooks/hook";
 import UserItem from "../shared/UserItem";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -30,7 +30,7 @@ const NewGroups = () => {
 
   const { isError, isLoading, data, error } = useAvailableFriendsQuery("");
 
-  const [newGroup, isloadingNewGroup] = userAsyncMutation(
+  const [newGroup, isloadingNewGroup] = useAsyncMutation(
     useCreateNewGroupMutation
   );
 

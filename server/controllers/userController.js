@@ -55,9 +55,7 @@ export const registerController = TryCatch(async (req, res) => {
       avatar,
     });
 
-    return res
-      .status(201)
-      .json({ message: "User registered successfully", user });
+    sendToken(user, `Welcome ${user.name}`, 201, res);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message });
@@ -213,9 +211,10 @@ export const acceptRequestController = TryCatch(async (req, res, next) => {
 
   if (!accept) {
     await request.deleteOne();
+
     return res.status(200).json({
       success: true,
-      message: "Request Declined ",
+      message: "Friend Request Rejected",
     });
   }
 
@@ -230,11 +229,11 @@ export const acceptRequestController = TryCatch(async (req, res, next) => {
     request.deleteOne(),
   ]);
 
-  emitEvents(req.user, REFRESH_CHATS, members);
+  emitEvents(req, REFRESH_CHATS, members);
 
   return res.status(200).json({
     success: true,
-    message: "Request Accepted",
+    message: "Friend Request Accepted",
     senderId: request.sender._id,
   });
 });
@@ -244,11 +243,13 @@ export const GetMyNotificationController = TryCatch(async (req, res, next) => {
     .find({ receiver: req.user })
     .populate("sender", "name username avatar");
 
+  console.log("requests", requests);
+
   const allRequests = requests.map(({ _id, sender }) => {
+    console.log(sender.name, sender.username, sender.avatar.url);
     return {
       _id,
       sender: {
-        _id: sender._id,
         name: sender.name,
         username: sender.username,
         avatar: sender.avatar.url,

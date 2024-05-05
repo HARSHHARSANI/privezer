@@ -22,7 +22,7 @@ import React, { Suspense, lazy, memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { backGround, orange } from "../components/constants/color";
-import { useErrors, userAsyncMutation } from "../components/hooks/hook";
+import { useErrors, useAsyncMutation } from "../components/hooks/hook";
 import { LayoutLoaders } from "../components/layout/Loaders";
 import AvatarCard from "../components/shared/AvatarCard";
 import UserItem from "../components/shared/UserItem";
@@ -54,16 +54,16 @@ const Group = () => {
   const chatId = useSearchParams()[0].get("group");
 
   const myGroups = useGetMyGroupsQuery("");
-  const [deleteGroup, isloadingDeleteGroup] = userAsyncMutation(
+  const [deleteGroup, isloadingDeleteGroup] = useAsyncMutation(
     useDeleteGroupMutation
   );
-  const [renameGroup, isloadingGroupName] = userAsyncMutation(
+  const [renameGroup, isloadingGroupName] = useAsyncMutation(
     useRenameGroupMutation
   );
-  const [removeMember, isloadingRemoveMember] = userAsyncMutation(
+  const [removeMember, isloadingRemoveMember] = useAsyncMutation(
     useRemoveMemberFromGroupMutation
   );
-  const [addmember, isloadingAddMember] = userAsyncMutation(
+  const [addmember, isloadingAddMember] = useAsyncMutation(
     useAddMemberToGroupMutation
   );
 

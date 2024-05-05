@@ -31,7 +31,7 @@ const api = createApi({
         url: `users/notification`,
         credentials: "include",
       }),
-      providesTags: ["User"],
+      invalidatesTags: ["User"],
     }),
 
     sendFriendRequest: builder.mutation({
