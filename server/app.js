@@ -39,6 +39,8 @@ const io = new Server(server, {
     origin: [
       "https://reliable-frangollo-715bc0.netlify.app",
       "https://effervescent-kataifi-87f2a0.netlify.app",
+      "http://localhost:5173",
+      "http://localhost:3000",
     ],
     credentials: true,
   },
@@ -61,6 +63,8 @@ app.use(
     origin: [
       "https://reliable-frangollo-715bc0.netlify.app",
       "https://effervescent-kataifi-87f2a0.netlify.app",
+      "http://localhost:5173",
+      "http://localhost:3000",
     ],
     credentials: true,
   })

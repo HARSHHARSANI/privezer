@@ -239,6 +239,7 @@ export const acceptRequestController = TryCatch(async (req, res, next) => {
 });
 
 export const GetMyNotificationController = TryCatch(async (req, res, next) => {
+  // console.log(req.user);
   const requests = await requestModel
     .find({ receiver: req.user })
     .populate("sender", "name username avatar");

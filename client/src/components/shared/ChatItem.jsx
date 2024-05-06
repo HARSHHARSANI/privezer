@@ -23,9 +23,10 @@ const ChatItem = ({
       to={`/chat/${_id}`}
       onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}
     >
+      {/* Ensure the motion.div is properly rendered */}
       <motion.div
         initial={{ opacity: 0, y: "-100%" }}
-        whileInView={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, y: 0 }} // Simplified animation logic
         transition={{ delay: index * 0.1 }}
         style={{
           display: "flex",
@@ -41,11 +42,13 @@ const ChatItem = ({
 
         <Stack>
           <Typography>{name}</Typography>
+          {/* Ensure newMessageAlert is an object */}
           {newMessageAlert && (
             <Typography>{newMessageAlert.count} New Message</Typography>
           )}
         </Stack>
 
+        {/* Ensure isOnline is a boolean */}
         {isOnline && (
           <Box
             sx={{

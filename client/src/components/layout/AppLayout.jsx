@@ -44,6 +44,8 @@ const AppLayout = () => (WrappedComponent) => {
 
     const { isLoading, data, isError, refetch, error } = useMyChatsQuery("");
 
+    // console.log(refetch);
+
     const NewMessagesAlertListener = useCallback(
       (data) => {
         if (data.chatId === chatId) return;
@@ -86,6 +88,7 @@ const AppLayout = () => (WrappedComponent) => {
         key: NEW_MESSAGE_ALERT,
         value: newMessagesAlert,
       });
+      refetch();
     }, [newMessagesAlert]);
 
     return (

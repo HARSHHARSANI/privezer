@@ -5,7 +5,7 @@ import { PRIVAZER_TOKEN } from "../config.js";
 import userModel from "../models/userModel.js";
 
 export const isAuthenticated = TryCatch((req, res, next) => {
-  //   console.log("req.cookies", req.cookies["privazer-token"]);
+  console.log("req.cookies", req.cookies);
   const token = req.cookies[PRIVAZER_TOKEN];
 
   if (!token) {
