@@ -26,17 +26,11 @@ const NewGroups = () => {
   const dispatch = useDispatch();
   const { isNewGroup } = useSelector((state) => state.misc);
 
-  console.log(isNewGroup, "isNewGroup");
-
   const { isError, isLoading, data, error } = useAvailableFriendsQuery("");
 
   const [newGroup, isloadingNewGroup] = useAsyncMutation(
     useCreateNewGroupMutation
   );
-
-  // console.log(createNewGroup.data, "createNewGroup");
-
-  // console.log(data, "data");
 
   const selectMemberHandler = (id) => {
     setSelectedMembers((prev) =>
@@ -45,7 +39,7 @@ const NewGroups = () => {
         : [...prev, id]
     );
   };
-  // console.log(selectedMembers);
+
   const groupName = useInputValidation("");
 
   const submitHandler = () => {
@@ -65,7 +59,6 @@ const NewGroups = () => {
   };
 
   const closeHandler = () => {
-    console.log("closeHandler");
     dispatch(setIsNewGroup(false));
   };
 

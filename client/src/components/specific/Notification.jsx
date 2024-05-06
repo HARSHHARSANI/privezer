@@ -26,9 +26,7 @@ const Notification = () => {
 
   const { isLoading, data, error, isError } = useGetNotificationsQuery();
 
-  console.log(data);
-
-  const [acceptFriendRequest] = useAcceptFriendRequestMutation();
+    const [acceptFriendRequest] = useAcceptFriendRequestMutation();
 
   useErrors([{ isError, error }]);
 
